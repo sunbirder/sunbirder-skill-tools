@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.log
+.claude/
+coverage/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
