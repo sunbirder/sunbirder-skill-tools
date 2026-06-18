@@ -95,7 +95,7 @@ describe('CLI installSkill', () => {
     installCommand('skill:vitepress-doc-site')
 
     const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
-    const targetFile = join(targetDir, 'skill:vitepress-doc-site.md')
+    const targetFile = join(targetDir, 'vitepress-doc-site.md')
     expect(existsSync(targetFile)).toBe(true)
   })
 })

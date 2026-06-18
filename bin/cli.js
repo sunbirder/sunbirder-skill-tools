@@ -79,7 +79,8 @@ function installCommand(commandName) {
   const destDir = parts.length > 1
     ? join(getCommandsTarget(), parts[0])
     : getCommandsTarget()
-  const dest = join(destDir, `${commandName}.md`)
+  const destName = parts.length > 1 ? parts[parts.length - 1] : commandName
+  const dest = join(destDir, `${destName}.md`)
 
   if (!existsSync(srcPath)) {
     console.error(`错误：命令 "${commandName}" 不存在`)

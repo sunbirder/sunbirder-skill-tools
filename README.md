@@ -22,6 +22,16 @@ node bin/cli.js install
 |------|------|
 | `vitepress-doc-site` | 将 Markdown 文件搭建为 VitePress 文档网站 |
 
+## 使用
+
+安装完成后，在 Claude Code 对话中直接输入斜杠命令即可调用技能：
+
+```bash
+/skill:vitepress-doc-site    # 将 Markdown 文件搭建为 VitePress 文档网站
+```
+
+每条命令会在对话中展开为完整的技能提示词，Claude Code 根据提示词执行对应任务。
+
 ## 命令
 
 ```bash
