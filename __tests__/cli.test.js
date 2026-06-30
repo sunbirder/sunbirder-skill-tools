@@ -22,12 +22,26 @@ describe('文件完整性', () => {
     expect(existsSync(path)).toBe(true)
   })
 
-  it('SKILL.md 包含正确内容', async () => {
+  it('skills/discuss/SKILL.md 存在', async () => {
     const { getPackageDir } = await import('../bin/cli.js')
     const pkgDir = getPackageDir()
-    const path = join(pkgDir, 'skills', 'vitepress-doc-site', 'SKILL.md')
+    const path = join(pkgDir, 'skills', 'discuss', 'SKILL.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('commands/skill/discuss.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'commands', 'skill', 'discuss.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('discuss SKILL.md 包含正确内容', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'discuss', 'SKILL.md')
     const content = readFileSync(path, 'utf8')
-    expect(content).toContain('VitePress')
+    expect(content).toContain('方案讨论')
   })
 })
 
@@ -46,6 +60,13 @@ describe('loadSkills', () => {
     const names = skills.map(s => s.name)
     expect(names).toContain('vitepress-doc-site')
   })
+
+  it('包含 discuss', async () => {
+    const { loadSkills } = await import('../bin/cli.js')
+    const skills = loadSkills()
+    const names = skills.map(s => s.name)
+    expect(names).toContain('discuss')
+  })
 })
 
 describe('loadCommands', () => {
@@ -62,6 +83,13 @@ describe('loadCommands', () => {
     const commands = loadCommands()
     const names = commands.map(c => c.name)
     expect(names).toContain('skill:vitepress-doc-site')
+  })
+
+  it('包含 skill:discuss', async () => {
+    const { loadCommands } = await import('../bin/cli.js')
+    const commands = loadCommands()
+    const names = commands.map(c => c.name)
+    expect(names).toContain('skill:discuss')
   })
 })
 
@@ -96,6 +124,26 @@ describe('CLI installSkill', () => {
 
     const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
     const targetFile = join(targetDir, 'vitepress-doc-site.md')
+    expect(existsSync(targetFile)).toBe(true)
+  })
+
+  it('安装 discuss 技能', async () => {
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('discuss')
+
+    const targetFile = join(tmpDir, '.claude', 'skills', 'discuss', 'SKILL.md')
+    expect(existsSync(targetFile)).toBe(true)
+
+    const content = readFileSync(targetFile, 'utf8')
+    expect(content).toContain('方案讨论')
+  })
+
+  it('安装 discuss 命令', async () => {
+    const { installCommand } = await import('../bin/cli.js')
+    installCommand('skill:discuss')
+
+    const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
+    const targetFile = join(targetDir, 'discuss.md')
     expect(existsSync(targetFile)).toBe(true)
   })
 })

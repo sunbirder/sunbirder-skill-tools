@@ -5,6 +5,7 @@
 | 技能 | 命令 | 说明 |
 |------|------|------|
 | vitepress-doc-site | `/skill:vitepress-doc-site` | 将 Markdown 文件搭建为 VitePress 文档网站 |
+| discuss | `/skill:discuss` | 轻量方案讨论 — 对比选项、确认方向、沉淀结论 |
 
 ## 安装单个技能
 

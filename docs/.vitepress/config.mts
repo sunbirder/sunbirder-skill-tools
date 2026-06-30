@@ -12,6 +12,7 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '使用指南', link: '/guide/' },
       { text: '技能列表', link: '/guide/skills' },
+      { text: '方案讨论', link: '/discussions/' },
     ],
     sidebar: {
       '/guide/': [
@@ -24,6 +25,16 @@ export default defineConfig({
             { text: '使用说明', link: '/guide/vitepress-doc-site' },
           ]
         },
+        {
+          text: 'discuss',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/discuss' },
+          ]
+        },
+      ],
+      '/discussions/': [
+        { text: '方案讨论', link: '/discussions/' },
       ],
     },
     footer: {

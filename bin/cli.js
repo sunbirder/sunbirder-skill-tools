@@ -27,6 +27,10 @@ const SKILL_LIST = [
     name: 'vitepress-doc-site',
     description: '将 Markdown 文件搭建为 VitePress 文档网站',
   },
+  {
+    name: 'discuss',
+    description: '轻量方案讨论 — 对比选项、确认方向、沉淀结论到文档站',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -34,6 +38,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:vitepress-doc-site',
     description: '将 Markdown 文件搭建为 VitePress 文档网站',
+  },
+  {
+    name: 'skill:discuss',
+    description: '启动轻量方案讨论',
   },
 ]
 
