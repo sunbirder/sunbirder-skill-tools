@@ -10,25 +10,32 @@
 
 ## 功能
 
-1. 检测 Node.js 环境，添加 vitepress 依赖
-2. 创建 `docs/.vitepress/config.ts`（导航、侧边栏）
-3. 创建首页 `docs/index.md`（home layout）
-4. 扫描现有 .md 文件自动生成侧边栏配置
-5. 配置 `dev`/`build`/`preview` npm scripts
+1. 检测 Node.js 环境，添加 vitepress 到根目录 devDependencies
+2. 创建 `docs/package.json`（dev/build/preview 脚本）
+3. 创建 `docs/.vitepress/config.ts`（导航、侧边栏）
+4. 创建首页 `docs/index.md`（home layout）
+5. 扫描现有 .md 文件自动生成侧边栏配置
 6. 可选：注册 Mermaid 图表支持
 
 ## 输出结构
 
 ```
 project/
-├── package.json          # 新增 vitepress 依赖和 scripts
+├── package.json          # vitepress 在 devDependencies
 ├── docs/
-│   ├── index.md          # 首页
+│   ├── package.json       # docs 专属脚本
+│   ├── index.md           # 首页
 │   ├── .vitepress/
-│   │   ├── config.ts     # 站点配置
+│   │   ├── config.ts      # 站点配置
 │   │   └── theme/
-│   │       └── index.ts  # 主题扩展
-│   └── guide/            # 文档内容
+│   │       └── index.ts   # 主题扩展
+│   └── guide/             # 文档内容
+```
+
+## 启动
+
+```bash
+cd docs && npm run dev
 ```
 
 ## 示例

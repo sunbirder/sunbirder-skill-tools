@@ -12,10 +12,7 @@
     "commands/"
   ],
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/.bin/jest",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
   "devDependencies": {
     "jest": "^29.7.0",

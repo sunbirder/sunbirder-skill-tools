@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dev": "npx vitepress dev . --host",
+    "build": "npx vitepress build .",
+    "preview": "npx vitepress preview ."
+  }
+}

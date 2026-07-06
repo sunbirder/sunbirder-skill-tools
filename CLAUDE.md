@@ -27,6 +27,6 @@
 
 ```bash
 npm test
-npm run docs:dev
-npm run docs:build
+cd docs && npm run dev
+cd docs && npm run build
 ```
