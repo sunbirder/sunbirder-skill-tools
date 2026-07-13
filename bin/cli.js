@@ -40,6 +40,10 @@ const SKILL_LIST = [
     name: 'doc-gen',
     description: '项目文档生成 — 扫描代码，自动生成完整开发文档',
   },
+  {
+    name: 'self-upgrade',
+    description: '自升级 — 自动查找仓库拉取最新代码或通过 npx 升级',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -59,6 +63,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:doc-gen',
     description: '根据项目代码生成完整开发文档',
+  },
+  {
+    name: 'skill:self-upgrade',
+    description: '升级 sunbirder-skill-tools 到最新版本',
   },
 ]
 

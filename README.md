@@ -24,6 +24,7 @@ node bin/cli.js install
 | `discuss` | 轻量方案讨论 — 对比选项、确认方向、沉淀结论 |
 | `docs-sync` | 文档与代码对齐 — 扫描变更、对比文档、修正过时 |
 | `doc-gen` | 项目文档生成 — 扫描代码，生成完整开发文档 |
+| `self-upgrade` | 自升级 — 自动查找仓库或 npx 升级到最新版 |
 
 ## 使用
 
@@ -34,6 +35,7 @@ node bin/cli.js install
 /skill:discuss              # 启动轻量方案讨论
 /skill:docs-sync            # 项目文档与代码对齐
 /skill:doc-gen              # 根据项目生成完整开发文档
+/skill:self-upgrade          # 升级技能工具到最新版
 ```
 
 每条命令会在对话中展开为完整的技能提示词，Claude Code 根据提示词执行对应任务。

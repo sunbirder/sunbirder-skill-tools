@@ -46,6 +46,13 @@ export default defineConfig({
             { text: '使用说明', link: '/guide/doc-gen' },
           ]
         },
+        {
+          text: 'self-upgrade',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/self-upgrade' },
+          ]
+        },
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },

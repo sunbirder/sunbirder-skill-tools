@@ -71,6 +71,20 @@ describe('文件完整性', () => {
     const path = join(pkgDir, 'commands', 'skill', 'doc-gen.md')
     expect(existsSync(path)).toBe(true)
   })
+
+  it('skills/self-upgrade/SKILL.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'self-upgrade', 'SKILL.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('commands/skill/self-upgrade.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'commands', 'skill', 'self-upgrade.md')
+    expect(existsSync(path)).toBe(true)
+  })
 })
 
 describe('loadSkills', () => {
@@ -109,6 +123,13 @@ describe('loadSkills', () => {
     const names = skills.map(s => s.name)
     expect(names).toContain('doc-gen')
   })
+
+  it('包含 self-upgrade', async () => {
+    const { loadSkills } = await import('../bin/cli.js')
+    const skills = loadSkills()
+    const names = skills.map(s => s.name)
+    expect(names).toContain('self-upgrade')
+  })
 })
 
 describe('loadCommands', () => {
@@ -146,6 +167,13 @@ describe('loadCommands', () => {
     const commands = loadCommands()
     const names = commands.map(c => c.name)
     expect(names).toContain('skill:doc-gen')
+  })
+
+  it('包含 skill:self-upgrade', async () => {
+    const { loadCommands } = await import('../bin/cli.js')
+    const commands = loadCommands()
+    const names = commands.map(c => c.name)
+    expect(names).toContain('skill:self-upgrade')
   })
 })
 
@@ -240,6 +268,26 @@ describe('CLI installSkill', () => {
 
     const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
     const targetFile = join(targetDir, 'doc-gen.md')
+    expect(existsSync(targetFile)).toBe(true)
+  })
+
+  it('安装 self-upgrade 技能', async () => {
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('self-upgrade')
+
+    const targetFile = join(tmpDir, '.claude', 'skills', 'self-upgrade', 'SKILL.md')
+    expect(existsSync(targetFile)).toBe(true)
+
+    const content = readFileSync(targetFile, 'utf8')
+    expect(content).toContain('自升级')
+  })
+
+  it('安装 self-upgrade 命令', async () => {
+    const { installCommand } = await import('../bin/cli.js')
+    installCommand('skill:self-upgrade')
+
+    const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
+    const targetFile = join(targetDir, 'self-upgrade.md')
     expect(existsSync(targetFile)).toBe(true)
   })
 })

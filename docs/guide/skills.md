@@ -8,6 +8,7 @@
 | discuss | `/skill:discuss` | 轻量方案讨论 — 对比选项、确认方向、沉淀结论 |
 | docs-sync | `/skill:docs-sync` | 文档与代码对齐 — 扫描变更、对比文档、修正过时 |
 | doc-gen | `/skill:doc-gen` | 项目文档生成 — 扫描代码，生成完整开发文档 |
+| self-upgrade | `/skill:self-upgrade` | 自升级 — 自动查找仓库或 npx 升级到最新版 |
 
 ## 安装单个技能
 
