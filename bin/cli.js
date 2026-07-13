@@ -35,6 +35,10 @@ const SKILL_LIST = [
     name: 'docs-sync',
     description: '文档与代码对齐 — 扫描变更、对比文档、修正过时内容',
   },
+  {
+    name: 'doc-gen',
+    description: '项目文档生成 — 扫描代码，自动生成完整开发文档',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -50,6 +54,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:docs-sync',
     description: '项目文档与代码对齐',
+  },
+  {
+    name: 'skill:doc-gen',
+    description: '根据项目代码生成完整开发文档',
   },
 ]
 

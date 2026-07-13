@@ -57,6 +57,20 @@ describe('文件完整性', () => {
     const path = join(pkgDir, 'commands', 'skill', 'docs-sync.md')
     expect(existsSync(path)).toBe(true)
   })
+
+  it('skills/doc-gen/SKILL.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'doc-gen', 'SKILL.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('commands/skill/doc-gen.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'commands', 'skill', 'doc-gen.md')
+    expect(existsSync(path)).toBe(true)
+  })
 })
 
 describe('loadSkills', () => {
@@ -88,6 +102,13 @@ describe('loadSkills', () => {
     const names = skills.map(s => s.name)
     expect(names).toContain('docs-sync')
   })
+
+  it('包含 doc-gen', async () => {
+    const { loadSkills } = await import('../bin/cli.js')
+    const skills = loadSkills()
+    const names = skills.map(s => s.name)
+    expect(names).toContain('doc-gen')
+  })
 })
 
 describe('loadCommands', () => {
@@ -118,6 +139,13 @@ describe('loadCommands', () => {
     const commands = loadCommands()
     const names = commands.map(c => c.name)
     expect(names).toContain('skill:docs-sync')
+  })
+
+  it('包含 skill:doc-gen', async () => {
+    const { loadCommands } = await import('../bin/cli.js')
+    const commands = loadCommands()
+    const names = commands.map(c => c.name)
+    expect(names).toContain('skill:doc-gen')
   })
 })
 
@@ -192,6 +220,26 @@ describe('CLI installSkill', () => {
 
     const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
     const targetFile = join(targetDir, 'docs-sync.md')
+    expect(existsSync(targetFile)).toBe(true)
+  })
+
+  it('安装 doc-gen 技能', async () => {
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('doc-gen')
+
+    const targetFile = join(tmpDir, '.claude', 'skills', 'doc-gen', 'SKILL.md')
+    expect(existsSync(targetFile)).toBe(true)
+
+    const content = readFileSync(targetFile, 'utf8')
+    expect(content).toContain('项目文档生成')
+  })
+
+  it('安装 doc-gen 命令', async () => {
+    const { installCommand } = await import('../bin/cli.js')
+    installCommand('skill:doc-gen')
+
+    const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
+    const targetFile = join(targetDir, 'doc-gen.md')
     expect(existsSync(targetFile)).toBe(true)
   })
 })
