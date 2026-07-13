@@ -6,6 +6,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { execSync } from 'child_process'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -116,6 +117,25 @@ function installCommand(commandName) {
   console.log(`  ✓ 已安装命令: /${commandName}`)
 }
 
+function upgradeAll() {
+  const pkgDir = getPackageDir()
+  const gitDir = join(pkgDir, '.git')
+
+  if (existsSync(gitDir)) {
+    console.log('拉取最新代码...')
+    try {
+      execSync('git pull', { cwd: pkgDir, stdio: 'inherit' })
+    } catch {
+      console.log('git pull 失败，使用当前代码继续安装')
+    }
+  } else {
+    console.log('非 git 仓库，跳过拉取，直接重新安装')
+  }
+
+  console.log('')
+  installAll()
+}
+
 function installAll() {
   console.log('安装 sunbirder-skill-tools...\n')
 
@@ -148,6 +168,7 @@ function showHelp() {
 
 用法:
   sunbirder-skills install          安装全部技能和命令
+  sunbirder-skills upgrade          拉取最新代码并重新安装
   sunbirder-skills add <skill>       安装指定技能
   sunbirder-skills list              列出可用技能
 
@@ -158,6 +179,7 @@ function showHelp() {
 
 npx 安装:
   npx sunbirder/sunbirder-skill-tools install
+  npx sunbirder/sunbirder-skill-tools upgrade
   npx sunbirder/sunbirder-skill-tools add vitepress-doc-site`)
 }
 
@@ -176,6 +198,9 @@ function main(argv) {
     case 'install':
     case '--all':
       installAll()
+      break
+    case 'upgrade':
+      upgradeAll()
       break
     case 'add':
       if (!target) {
@@ -221,7 +246,7 @@ function installSkillByName(skillName) {
 }
 
 // 导出函数供测试使用
-export { loadSkills, loadCommands, installSkill, installCommand, getPackageDir }
+export { loadSkills, loadCommands, installSkill, installCommand, installAll, upgradeAll, getPackageDir }
 
 // 直接运行时执行 CLI
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

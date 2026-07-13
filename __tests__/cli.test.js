@@ -243,3 +243,35 @@ describe('CLI installSkill', () => {
     expect(existsSync(targetFile)).toBe(true)
   })
 })
+
+describe('CLI upgradeAll', () => {
+  let tmpDir
+
+  beforeEach(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), 'sunbirder-test-'))
+    process.env.HOME = tmpDir
+    process.exit = jest.fn()
+  })
+
+  afterEach(() => {
+    process.env.HOME = realHome
+    process.exit = realExit
+  })
+
+  it('upgrade 重新安装全部技能和命令', async () => {
+    const { upgradeAll } = await import('../bin/cli.js')
+    upgradeAll()
+
+    // 验证技能文件
+    expect(existsSync(join(tmpDir, '.claude', 'skills', 'vitepress-doc-site', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.claude', 'skills', 'discuss', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.claude', 'skills', 'docs-sync', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.claude', 'skills', 'doc-gen', 'SKILL.md'))).toBe(true)
+
+    // 验证命令文件
+    expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'vitepress-doc-site.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'discuss.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'docs-sync.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'doc-gen.md'))).toBe(true)
+  })
+})

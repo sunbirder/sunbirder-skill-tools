@@ -42,6 +42,7 @@ node bin/cli.js install
 
 ```bash
 sunbirder-skills install               # 安装全部技能
+sunbirder-skills upgrade               # 拉取最新代码并重新安装
 sunbirder-skills add <name>            # 安装指定技能
 sunbirder-skills list                  # 列出可用技能
 ```
