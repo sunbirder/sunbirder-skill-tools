@@ -31,6 +31,10 @@ const SKILL_LIST = [
     name: 'discuss',
     description: '轻量方案讨论 — 对比选项、确认方向、沉淀结论到文档站',
   },
+  {
+    name: 'docs-sync',
+    description: '文档与代码对齐 — 扫描变更、对比文档、修正过时内容',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -42,6 +46,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:discuss',
     description: '启动轻量方案讨论',
+  },
+  {
+    name: 'skill:docs-sync',
+    description: '项目文档与代码对齐',
   },
 ]
 

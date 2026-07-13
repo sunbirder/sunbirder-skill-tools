@@ -6,6 +6,7 @@
 |------|------|------|
 | vitepress-doc-site | `/skill:vitepress-doc-site` | 将 Markdown 文件搭建为 VitePress 文档网站 |
 | discuss | `/skill:discuss` | 轻量方案讨论 — 对比选项、确认方向、沉淀结论 |
+| docs-sync | `/skill:docs-sync` | 文档与代码对齐 — 扫描变更、对比文档、修正过时 |
 
 ## 安装单个技能
 

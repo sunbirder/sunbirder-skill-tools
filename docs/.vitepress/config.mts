@@ -32,6 +32,13 @@ export default defineConfig({
             { text: '使用说明', link: '/guide/discuss' },
           ]
         },
+        {
+          text: 'docs-sync',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/docs-sync' },
+          ]
+        },
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },

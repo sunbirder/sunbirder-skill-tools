@@ -22,6 +22,7 @@ node bin/cli.js install
 |------|------|
 | `vitepress-doc-site` | 将 Markdown 文件搭建为 VitePress 文档网站 |
 | `discuss` | 轻量方案讨论 — 对比选项、确认方向、沉淀结论 |
+| `docs-sync` | 文档与代码对齐 — 扫描变更、对比文档、修正过时 |
 
 ## 使用
 
@@ -30,6 +31,7 @@ node bin/cli.js install
 ```bash
 /skill:vitepress-doc-site    # 将 Markdown 文件搭建为 VitePress 文档网站
 /skill:discuss              # 启动轻量方案讨论
+/skill:docs-sync            # 项目文档与代码对齐
 ```
 
 每条命令会在对话中展开为完整的技能提示词，Claude Code 根据提示词执行对应任务。
@@ -46,6 +48,6 @@ sunbirder-skills list                  # 列出可用技能
 
 ```bash
 npm test                               # 运行测试
-npm run docs:dev                       # 启动文档站
-npm run docs:build                     # 构建文档站
+cd docs && npm run dev                  # 启动文档站
+cd docs && npm run build                # 构建文档站
 ```
