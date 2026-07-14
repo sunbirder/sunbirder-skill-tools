@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
-export default defineConfig({
+export default withMermaid(
+  defineConfig({
   title: 'sunbirder-skill-tools',
   description: '个人 Claude Code 技能工具集',
   lang: 'zh-CN',
@@ -63,3 +65,4 @@ export default defineConfig({
     },
   },
 })
+)

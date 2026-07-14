@@ -10,12 +10,11 @@
 
 ## 功能
 
-1. 检测 Node.js 环境，添加 vitepress 到根目录 devDependencies
-2. 创建 `docs/package.json`（dev/build/preview 脚本）
-3. 创建 `docs/.vitepress/config.ts`（导航、侧边栏）
+1. 检测 Node.js 环境，添加 vitepress、vitepress-plugin-mermaid、mermaid 到 devDependencies
+2. 创建 `docs/package.json`（dev/build/preview 脚本，使用 `../node_modules/.bin/vitepress`）
+3. 创建 `docs/.vitepress/config.ts`（导航、侧边栏），使用 `withMermaid()` 包装
 4. 创建首页 `docs/index.md`（home layout）
 5. 扫描现有 .md 文件自动生成侧边栏配置
-6. 可选：注册 Mermaid 图表支持
 
 ## 输出结构
 
@@ -64,17 +63,13 @@ sidebar: {
 ```
 
 ### Mermaid 支持
-````typescript
-markdown: {
-  config: (md) => {
-    const defaultRender = md.renderer.rules.fence!
-    md.renderer.rules.fence = (tokens, idx, options, env, self) => {
-      const token = tokens[idx]
-      if (token.info.trim() === 'mermaid') {
-        return `<Mermaid code="${md.utils.escapeHtml(token.content.trim())}" />`
-      }
-      return defaultRender(tokens, idx, options, env, self)
-    }
-  }
-}
+
+内置：`vitepress-plugin-mermaid` + `withMermaid()` 包装 config。
+
+````markdown
+```mermaid
+graph TD
+    A[开始] --> B{判断}
+    B -->|是| C[执行]
+```
 ````

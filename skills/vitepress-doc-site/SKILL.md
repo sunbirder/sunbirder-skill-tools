@@ -34,7 +34,9 @@ project/
 ```json
 {
   "devDependencies": {
-    "vitepress": "^1.0.0"
+    "vitepress": "^1.0.0",
+    "vitepress-plugin-mermaid": "^2.0.0",
+    "mermaid": "^11.0.0"
   }
 }
 ```
@@ -44,9 +46,9 @@ project/
 ```json
 {
   "scripts": {
-    "dev": "npx vitepress dev . --host",
-    "build": "npx vitepress build .",
-    "preview": "npx vitepress preview ."
+    "dev": "../node_modules/.bin/vitepress dev . --host",
+    "build": "../node_modules/.bin/vitepress build .",
+    "preview": "../node_modules/.bin/vitepress preview ."
   }
 }
 ```
@@ -85,29 +87,34 @@ features:
 
 ```typescript
 import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
-export default defineConfig({
-  title: '站点标题',
-  description: '站点描述',
-  lang: 'zh-CN',
-  ignoreDeadLinks: true,
+export default withMermaid(
+  defineConfig({
+    title: '站点标题',
+    description: '站点描述',
+    lang: 'zh-CN',
+    ignoreDeadLinks: true,
 
-  themeConfig: {
-    outline: { level: [2, 3] },  // 右侧目录显示 h2/h3
-    nav: [
-      { text: '首页', link: '/' },
-      { text: '指南', link: '/guide/' },
-    ],
-    sidebar: {
-      '/guide/': [
-        { text: '章节一', link: '/guide/page1' },
-        { text: '章节二', link: '/guide/page2' },
+    themeConfig: {
+      outline: { level: [2, 3] },
+      nav: [
+        { text: '首页', link: '/' },
+        { text: '指南', link: '/guide/' },
       ],
+      sidebar: {
+        '/guide/': [
+          { text: '章节一', link: '/guide/page1' },
+          { text: '章节二', link: '/guide/page2' },
+        ],
+      },
+      footer: { message: '项目名称' },
     },
-    footer: { message: '项目名称' },
-  }
-})
+  })
+)
 ```
+
+`withMermaid()` 自动注入 Mermaid 支持，文档中可直接使用 ````mermaid` 代码块渲染流程图、时序图等。
 
 ### 5. 主题扩展 (`docs/.vitepress/theme/index.ts`)
 
@@ -190,30 +197,16 @@ export default defineConfig({
 
 ## Mermaid 图表支持
 
-安装 `mermaid` 依赖后在 markdown 配置中拦截 fence 渲染：
+安装 `vitepress-plugin-mermaid` 和 `mermaid` 后，在 config.ts 中用 `withMermaid()` 包装即可。文档中直接使用：
 
-```typescript
-// config.ts
-import { defineConfig } from 'vitepress'
-
-export default defineConfig({
-  markdown: {
-    config: (md) => {
-      const defaultRender = md.renderer.rules.fence!
-      md.renderer.rules.fence = (tokens, idx, options, env, self) => {
-        const token = tokens[idx]
-        if (token.info.trim() === 'mermaid') {
-          const code = token.content.trim()
-          return `<Mermaid code="${md.utils.escapeHtml(code)}" />`
-        }
-        return defaultRender(tokens, idx, options, env, self)
-      }
-    }
-  }
-})
+````markdown
+```mermaid
+graph TD
+    A[开始] --> B{判断}
+    B -->|是| C[执行]
+    B -->|否| D[结束]
 ```
-
-然后在 `theme/index.ts` 注册 Mermaid 组件，在 `.vitepress/components/` 下实现组件。
+````
 
 ## .gitignore
 
