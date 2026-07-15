@@ -11,10 +11,11 @@
 ## 功能
 
 1. 检测 Node.js 环境，添加 vitepress、vitepress-plugin-mermaid、mermaid 到 devDependencies
-2. 创建 `docs/package.json`（dev/build/preview 脚本，使用 `../node_modules/.bin/vitepress`）
-3. 创建 `docs/.vitepress/config.ts`（导航、侧边栏），使用 `withMermaid()` 包装
-4. 创建首页 `docs/index.md`（home layout）
-5. 扫描现有 .md 文件自动生成侧边栏配置
+2. 自动扫描已用端口（从 5173 起，间隔 10），分配空闲端口
+3. 创建 `docs/package.json`（dev/build/preview，使用 `../node_modules/.bin/vitepress`，固定端口）
+4. 创建 `docs/.vitepress/config.ts`（导航、侧边栏），使用 `withMermaid()` 包装
+5. 创建首页 `docs/index.md`（home layout）
+6. 扫描现有 .md 文件自动生成侧边栏配置
 
 ## 输出结构
 

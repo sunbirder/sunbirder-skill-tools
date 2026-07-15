@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "../node_modules/.bin/vitepress dev . --host",
+    "dev": "../node_modules/.bin/vitepress dev . --host --port 5173",
     "build": "../node_modules/.bin/vitepress build .",
     "preview": "../node_modules/.bin/vitepress preview ."
   }

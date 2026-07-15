@@ -29,6 +29,19 @@ project/
 
 ## 快速搭建
 
+### 0. 端口分配
+
+搭建前先扫描已用端口，自动分配一个空闲端口。规则：
+
+```bash
+# 从 5173 开始，间隔 10，找第一个空闲端口
+PORT=5173
+while lsof -i :$PORT &>/dev/null; do PORT=$((PORT + 10)); done
+echo $PORT
+```
+
+然后将端口写入 `docs/package.json` 的 dev 脚本。不同项目的文档站端口不会冲突。
+
 ### 1. 根目录 package.json
 
 ```json
@@ -43,10 +56,12 @@ project/
 
 ### 2. docs/package.json
 
+port 为第一步自动分配的端口号：
+
 ```json
 {
   "scripts": {
-    "dev": "../node_modules/.bin/vitepress dev . --host",
+    "dev": "../node_modules/.bin/vitepress dev . --host --port <port>",
     "build": "../node_modules/.bin/vitepress build .",
     "preview": "../node_modules/.bin/vitepress preview ."
   }
