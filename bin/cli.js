@@ -44,6 +44,10 @@ const SKILL_LIST = [
     name: 'self-upgrade',
     description: '自升级 — 自动查找仓库拉取最新代码或通过 npx 升级',
   },
+  {
+    name: 'wxapkg-unpack',
+    description: '微信小程序解包 — 解密 wxapkg 并反编译为可读工程目录',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -67,6 +71,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:self-upgrade',
     description: '升级 sunbirder-skill-tools 到最新版本',
+  },
+  {
+    name: 'skill:wxapkg-unpack',
+    description: '解密并反编译微信小程序 wxapkg 包',
   },
 ]
 

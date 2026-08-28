@@ -85,6 +85,29 @@ describe('文件完整性', () => {
     const path = join(pkgDir, 'commands', 'skill', 'self-upgrade.md')
     expect(existsSync(path)).toBe(true)
   })
+
+  it('skills/wxapkg-unpack/SKILL.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'wxapkg-unpack', 'SKILL.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('commands/skill/wxapkg-unpack.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'commands', 'skill', 'wxapkg-unpack.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('wxapkg-unpack SKILL.md 包含解密原理', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'wxapkg-unpack', 'SKILL.md')
+    const content = readFileSync(path, 'utf8')
+    expect(content).toContain('V1MMWX')
+    expect(content).toContain('saltiest')
+  })
 })
 
 describe('loadSkills', () => {
@@ -129,6 +152,13 @@ describe('loadSkills', () => {
     const skills = loadSkills()
     const names = skills.map(s => s.name)
     expect(names).toContain('self-upgrade')
+  })
+
+  it('包含 wxapkg-unpack', async () => {
+    const { loadSkills } = await import('../bin/cli.js')
+    const skills = loadSkills()
+    const names = skills.map(s => s.name)
+    expect(names).toContain('wxapkg-unpack')
   })
 })
 

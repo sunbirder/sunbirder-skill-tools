@@ -55,6 +55,13 @@ export default withMermaid(
             { text: '使用说明', link: '/guide/self-upgrade' },
           ]
         },
+        {
+          text: 'wxapkg-unpack',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/wxapkg-unpack' },
+          ]
+        },
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },
