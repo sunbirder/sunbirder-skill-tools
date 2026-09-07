@@ -41,6 +41,10 @@ const SKILL_LIST = [
     description: '项目文档生成 — 扫描代码，自动生成完整开发文档',
   },
   {
+    name: 'docs-all-in-one',
+    description: '一站式 web 文档 — 生成完整文档集并搭建 VitePress 文档站',
+  },
+  {
     name: 'self-upgrade',
     description: '自升级 — 自动查找仓库拉取最新代码或通过 npx 升级',
   },
@@ -67,6 +71,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:doc-gen',
     description: '根据项目代码生成完整开发文档',
+  },
+  {
+    name: 'skill:docs-all-in-one',
+    description: '一站式 web 文档 — 生成文档集并搭建 VitePress 文档站',
   },
   {
     name: 'skill:self-upgrade',

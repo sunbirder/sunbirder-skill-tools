@@ -49,6 +49,13 @@ export default withMermaid(
           ]
         },
         {
+          text: 'docs-all-in-one',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/docs-all-in-one' },
+          ]
+        },
+        {
           text: 'self-upgrade',
           collapsed: false,
           items: [

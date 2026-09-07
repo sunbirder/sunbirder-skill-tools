@@ -72,6 +72,30 @@ describe('文件完整性', () => {
     expect(existsSync(path)).toBe(true)
   })
 
+  it('skills/docs-all-in-one/SKILL.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'docs-all-in-one', 'SKILL.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('commands/skill/docs-all-in-one.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'commands', 'skill', 'docs-all-in-one.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('docs-all-in-one SKILL.md 组合 doc-gen 与 vitepress-doc-site', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'docs-all-in-one', 'SKILL.md')
+    const content = readFileSync(path, 'utf8')
+    expect(content).toContain('doc-gen')
+    expect(content).toContain('vitepress-doc-site')
+    expect(content).toContain('一站式')
+  })
+
   it('skills/self-upgrade/SKILL.md 存在', async () => {
     const { getPackageDir } = await import('../bin/cli.js')
     const pkgDir = getPackageDir()
@@ -147,6 +171,13 @@ describe('loadSkills', () => {
     expect(names).toContain('doc-gen')
   })
 
+  it('包含 docs-all-in-one', async () => {
+    const { loadSkills } = await import('../bin/cli.js')
+    const skills = loadSkills()
+    const names = skills.map(s => s.name)
+    expect(names).toContain('docs-all-in-one')
+  })
+
   it('包含 self-upgrade', async () => {
     const { loadSkills } = await import('../bin/cli.js')
     const skills = loadSkills()
@@ -197,6 +228,13 @@ describe('loadCommands', () => {
     const commands = loadCommands()
     const names = commands.map(c => c.name)
     expect(names).toContain('skill:doc-gen')
+  })
+
+  it('包含 skill:docs-all-in-one', async () => {
+    const { loadCommands } = await import('../bin/cli.js')
+    const commands = loadCommands()
+    const names = commands.map(c => c.name)
+    expect(names).toContain('skill:docs-all-in-one')
   })
 
   it('包含 skill:self-upgrade', async () => {
@@ -298,6 +336,26 @@ describe('CLI installSkill', () => {
 
     const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
     const targetFile = join(targetDir, 'doc-gen.md')
+    expect(existsSync(targetFile)).toBe(true)
+  })
+
+  it('安装 docs-all-in-one 技能', async () => {
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('docs-all-in-one')
+
+    const targetFile = join(tmpDir, '.claude', 'skills', 'docs-all-in-one', 'SKILL.md')
+    expect(existsSync(targetFile)).toBe(true)
+
+    const content = readFileSync(targetFile, 'utf8')
+    expect(content).toContain('一站式')
+  })
+
+  it('安装 docs-all-in-one 命令', async () => {
+    const { installCommand } = await import('../bin/cli.js')
+    installCommand('skill:docs-all-in-one')
+
+    const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
+    const targetFile = join(targetDir, 'docs-all-in-one.md')
     expect(existsSync(targetFile)).toBe(true)
   })
 
