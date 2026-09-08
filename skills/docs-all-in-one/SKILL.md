@@ -43,9 +43,10 @@ description: 一站式 web 文档 — 一条命令完成项目文档生成（doc
    while lsof -i :$PORT &>/dev/null; do PORT=$((PORT + 10)); done
    echo $PORT
    ```
-2. 根目录 `package.json` 添加 devDependencies：`vitepress`、`vitepress-plugin-mermaid`、`mermaid`
-3. `docs/package.json` — dev/build/preview 脚本，使用 `../node_modules/.bin/vitepress`，dev 固定分配的端口
-4. `docs/.vitepress/config.ts` — 站点配置骨架，`withMermaid()` 包装（此时侧边栏先建分组框架）
+   启动前检查是否已有该目录的 vitepress 实例在跑（双实例会互相破坏缓存，见 vitepress-doc-site 常见问题第 1 条）
+2. 根目录 `package.json` 添加 devDependencies：`vitepress`、`vitepress-plugin-mermaid`、`mermaid`，以及 `docs:dev` / `docs:build` / `docs:preview` 三个脚本
+3. `docs/package.json` — **含 `"type": "module"`**（缺了 config.ts 加载直接报 ESM 错误），dev/build/preview 脚本使用 `../node_modules/.bin/vitepress`，dev 固定分配的端口
+4. `docs/.vitepress/config.ts` — 站点配置骨架，`withMermaid()` 包装，**必须含 `vite.optimizeDeps.include: ['fastdom', 'mermaid', 'mermaid/node_modules/dagre-d3-es']`**（缺了 dev 白屏且 build 正常，极难排查，见 vitepress-doc-site 常见问题第 3 条；此时侧边栏先建分组框架）
 5. `docs/index.md` — home layout 首页
 6. `docs/.vitepress/theme/index.ts` — 主题扩展
 7. `.gitignore` — 排除 `node_modules/`、`docs/.vitepress/dist/`、`docs/.vitepress/cache/`
@@ -55,6 +56,8 @@ description: 一站式 web 文档 — 一条命令完成项目文档生成（doc
 ### 第四步：逐份生成文档（来自 doc-gen）
 
 按 总览 → 开发流程 → 功能流程 → 参考 的顺序，将文档写入 `docs/` 对应目录。
+
+**并行分派时先锁定文件名清单**：把每个文档的确切文件路径（含文件名）写进对应 Agent 的任务书，禁止 Agent 自行发明文件名——否则互链必然死链（见第五步自检）。
 
 每份文档硬性要求：
 
@@ -75,6 +78,18 @@ description: 一站式 web 文档 — 一条命令完成项目文档生成（doc
 
 - 对照第二步清单逐项检查：每个流程都有独立文档、图表覆盖异常路径、文档互链
 - 将所有文档按分类注册到 `docs/.vitepress/config.ts` 侧边栏（总览 / 开发流程 / 功能流程 / 参考 分组）
+- **死链扫描必须为空**（并行生成后死链高发）：
+
+```bash
+cd docs && find . -name '*.md' -not -path './node_modules/*' -print0 | while IFS= read -r -d '' f; do
+  dir=$(dirname "$f")
+  grep -oE '\]\([^)#]+\.md' "$f" 2>/dev/null | sed -E 's/\]\(//' | while read link; do
+    if [ ! -f "$dir/$link" ]; then echo "DEAD: $f -> $link"; fi
+  done
+done | sort -u
+```
+
+发现死链用 `sed -i '' 's|旧路径|新路径|g'` 批量修正后复扫。
 
 ### 第六步：启动预览（来自 vitepress-doc-site）
 
@@ -84,6 +99,13 @@ cd docs && npm run dev
 
 首次运行前需 `npm install`。启动后向用户报告访问地址（`http://localhost:<port>`）。
 
+**交付前必须真浏览器验证**（curl 200 不代表页面正常，VitePress dev 是 SPA 空壳）：
+
+1. 用 CDP（web-access skill）或让用户打开 `http://localhost:<port>`
+2. 检查首页：`document.title` 非空、`.vp-doc` 或 `.VPApp` 存在、Hero 文案出现
+3. 检查一个含 mermaid 图的页面：`document.querySelectorAll('.mermaid svg').length > 0`
+4. 白屏时按 vitepress-doc-site 常见问题第 3、4 条排查（高频根因：optimizeDeps 缺 fastdom / 双实例缓存损坏）
+
 ## 原则
 
 - **一次到位** — 单条命令产出可浏览的完整文档站，不需要用户再手动搭站
@@ -91,3 +113,4 @@ cd docs && npm run dev
 - **图表优先** — 图覆盖主流程、分支与异常路径
 - **以代码为准** — 基于实际代码，不凭空编造
 - **已有文档先询问** — 已存在的文档站或文档，询问覆盖还是补充
+- **真实验证** — 交付前必须真浏览器验证页面渲染，curl 200 / build 成功都不算数

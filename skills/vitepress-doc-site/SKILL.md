@@ -13,10 +13,10 @@ VitePress 是 Vue 团队维护的静态站点生成器，将 Markdown 文件渲�
 
 ```
 project/
-├── package.json              # 项目依赖
+├── package.json              # 项目依赖 + docs:* 脚本
 ├── .gitignore                # 排除 dist/ 和 cache/
 └── docs/                     # 文档根目录
-    ├── package.json           # docs 专属脚本（dev/build/preview）
+    ├── package.json           # docs 专属脚本（dev/build/preview）+ type:module
     ├── index.md              # 首页（home layout）
     ├── guide/                # 文档内容
     │   ├── xxx.md
@@ -42,13 +42,27 @@ echo $PORT
 
 然后将端口写入 `docs/package.json` 的 dev 脚本。不同项目的文档站端口不会冲突。
 
+**启动前必须检查单实例**（见"常见问题"第 1 条）：
+
+```bash
+# 若发现该 docs 目录已有 vitepress dev 进程，不要重复启动；先 kill 再启动
+ps aux | grep "vitepress dev" | grep -v grep
+```
+
 ### 1. 根目录 package.json
+
+根目录提供 `docs:*` 脚本（用户可直接 `npm run docs:dev`）：
 
 ```json
 {
+  "scripts": {
+    "docs:dev": "cd docs && npm run dev",
+    "docs:build": "cd docs && npm run build",
+    "docs:preview": "cd docs && npm run preview"
+  },
   "devDependencies": {
-    "vitepress": "^1.0.0",
-    "vitepress-plugin-mermaid": "^2.0.0",
+    "vitepress": "^1.6.0",
+    "vitepress-plugin-mermaid": "^2.0.17",
     "mermaid": "^11.0.0"
   }
 }
@@ -56,10 +70,11 @@ echo $PORT
 
 ### 2. docs/package.json
 
-port 为第一步自动分配的端口号：
+port 为第一步自动分配的端口号。**`"type": "module"` 必须有**，否则 config.ts 按 CJS 加载直接报错（见"常见问题"第 2 条）：
 
 ```json
 {
+  "type": "module",
   "scripts": {
     "dev": "../node_modules/.bin/vitepress dev . --host --port <port>",
     "build": "../node_modules/.bin/vitepress build .",
@@ -110,6 +125,14 @@ export default withMermaid(
     description: '站点描述',
     lang: 'zh-CN',
     ignoreDeadLinks: true,
+
+    vite: {
+      optimizeDeps: {
+        // 必需！withMermaid 不会自动预构建 mermaid 的 CJS 依赖，
+        // 缺了 dev 模式白屏且 build 正常（极难排查，见"常见问题"第 3 条）
+        include: ['fastdom', 'mermaid', 'mermaid/node_modules/dagre-d3-es'],
+      },
+    },
 
     themeConfig: {
       outline: { level: [2, 3] },
@@ -239,3 +262,81 @@ docs/.vitepress/cache/
 | sidebar 不显示 | 检查当前页面路径是否匹配 sidebar 的 key |
 | 右侧目录不显示标题 | 确认 `outline.level` 包含对应标题级别 |
 | markdown 链接失效 | 相对路径用 `./` 开头，或用根路径 `/guide/xxx` |
+
+### 踩坑实录（必须逐条规避）
+
+以下每条都真实踩过，排查成本高，按规范执行可直接规避。
+
+#### 1. 双实例冲突 → 端口漂移 + 白屏
+
+同一 docs 目录启动两个 `vitepress dev`（如 Agent 后台启动了一个、用户终端又启动一个），第二个实例自动跳到 `port+1`，但两者**共写同一份 `.vitepress/cache/`**，缓存损坏后两个实例都可能输出空壳页面。
+
+**规范：**
+- 启动前必查：`lsof -nP -i :<port> -sTCP:LISTEN` 和 `ps aux | grep "vitepress dev" | grep -v grep`
+- 已有实例就不要再启动；需要重启时先 `pkill -f "vitepress dev"` 再清 `docs/.vitepress/cache/` 后启动
+- 若发现端口漂移实例（如配置 5203 却跑在 5204），先杀掉全部实例再重启，不要在漂移实例上继续排查
+
+#### 2. ESM 报错："ESM file cannot be loaded by `require`"
+
+`docs/package.json` 缺 `"type": "module"` 时，config.ts 被按 CJS 加载，报：
+
+```
+✘ [ERROR] "vitepress" resolved to an ESM file. ESM file cannot be loaded by `require`.
+```
+
+**规范：** `docs/package.json` 必须含 `"type": "module"`。
+
+#### 3. dev 白屏但 build 正常（最隐蔽）：optimizeDeps 缺 fastdom
+
+`vitepress-plugin-mermaid` 的 `optimizeDeps.include` 没有包含 mermaid 的 CJS 依赖（`fastdom` 等）。dev 模式下浏览器直接加载原始 CJS 文件，报 `does not provide an export named 'default'`，Vue 应用不挂载，**页面白屏**；而 build 不走浏览器逐模块加载，**完全正常**。
+
+**规范：** config.ts 必须加（见上文配置模板）：
+
+```typescript
+vite: {
+  optimizeDeps: {
+    include: ['fastdom', 'mermaid', 'mermaid/node_modules/dagre-d3-es'],
+  },
+},
+```
+
+修改 optimizeDeps 后必须清缓存重启：`rm -rf docs/.vitepress/cache`。
+
+#### 4. curl 验证误导：HTTP 200 ≠ 页面正常
+
+VitePress dev 是 SPA：curl 只能拿到约 450 字节的空壳 HTML（`<title></title>` + `<div id="app"></div>`），**无论页面是否真的能渲染都是 200**。用 curl 判断"页面正常"完全不可靠。
+
+**验证分级：**
+
+| 级别 | 手段 | 能证明什么 |
+|------|------|-----------|
+| L1 | `npm run docs:build` 成功 | config 语法正确、markdown 可编译（但 dev 白屏问题查不出） |
+| L2 | 真浏览器（CDP）打开 + DOM 检查 | 页面真实可渲染、白屏/JS 错误可发现 |
+| L3 | 浏览器检查 `.mermaid svg` 数量 | Mermaid 图真实渲染 |
+
+**L2 是交付前的最低要求。** 交付文档站给用户前，必须用真实浏览器（如 CDP 打开页面后 eval `document.title` 与 `.vp-doc` 是否有内容）验证至少首页 + 一个含 mermaid 图的页面。禁止仅凭 curl 200 或 build 成功就宣布完成。
+
+白屏时的排查顺序：①浏览器控制台/`import()` 逐模块加载定位报错；②`curl /@id/vitepress/config` 看 config 是否 500；③检查是否双实例/缓存损坏；④检查 optimizeDeps 是否含 fastdom。
+
+#### 5. 批量生成文档 → 文件名不一致死链
+
+多个并行 Agent 生成文档时，互相引用的文件名容易不一致（如 `workorder.md` vs `work-order.md` vs `orders.md`），产生大量死链。
+
+**规范：**
+- 生成前先确定**文件名清单**并在所有 Agent 的任务书中原样下发，禁止各 Agent 自行命名
+- 交付前统一做死链扫描：
+
+```bash
+cd docs && find . -name '*.md' -not -path './node_modules/*' -print0 | while IFS= read -r -d '' f; do
+  dir=$(dirname "$f")
+  grep -oE '\]\([^)#]+\.md' "$f" 2>/dev/null | sed -E 's/\]\(//' | while read link; do
+    if [ ! -f "$dir/$link" ]; then echo "DEAD: $f -> $link"; fi
+  done
+done | sort -u
+```
+
+输出必须为空才算完成。
+
+#### 6. 依赖告警 "Failed to resolve dependency: debug"
+
+启动日志出现 `Failed to resolve dependency: debug, present in 'optimizeDeps.include'`：安装 `npm i -D debug` 即可消除（mermaid 依赖链需要它）。
