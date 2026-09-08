@@ -52,6 +52,10 @@ const SKILL_LIST = [
     name: 'wxapkg-unpack',
     description: '微信小程序解包 — 解密 wxapkg 并反编译为可读工程目录',
   },
+  {
+    name: 'disk-clean',
+    description: 'macOS 磁盘清理 — 排查大项、清理可再生缓存、大文件清单交用户决定',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -83,6 +87,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:wxapkg-unpack',
     description: '解密并反编译微信小程序 wxapkg 包',
+  },
+  {
+    name: 'skill:disk-clean',
+    description: 'macOS 磁盘清理 — 排查大项并释放空间',
   },
 ]
 

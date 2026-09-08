@@ -27,6 +27,7 @@ node bin/cli.js install
 | `docs-all-in-one` | 一站式 web 文档 — 生成完整文档集并搭建 VitePress 文档站 |
 | `self-upgrade` | 自升级 — 自动查找仓库或 npx 升级到最新版 |
 | `wxapkg-unpack` | 微信小程序解包 — 解密 wxapkg 并反编译为可读工程 |
+| `disk-clean` | macOS 磁盘清理 — 排查大项、清理可再生缓存、大文件清单交用户决定 |
 
 ## 使用
 
@@ -40,6 +41,7 @@ node bin/cli.js install
 /skill:docs-all-in-one       # 一站式：生成文档集 + 搭建文档站 + 启动预览
 /skill:self-upgrade          # 升级技能工具到最新版
 /skill:wxapkg-unpack         # 解密并反编译微信小程序包
+/skill:disk-clean            # macOS 磁盘清理
 ```
 
 每条命令会在对话中展开为完整的技能提示词，Claude Code 根据提示词执行对应任务。

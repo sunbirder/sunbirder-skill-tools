@@ -69,6 +69,13 @@ export default withMermaid(
             { text: '使用说明', link: '/guide/wxapkg-unpack' },
           ]
         },
+        {
+          text: 'disk-clean',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/disk-clean' },
+          ]
+        },
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },
