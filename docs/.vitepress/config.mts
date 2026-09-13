@@ -86,6 +86,13 @@ export default withMermaid(
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },
+        {
+          text: '2026-09-13',
+          collapsed: false,
+          items: [
+            { text: '支持 DeepSeek Harness 平台', link: '/discussions/2026-09-13-dsh-platform-support' },
+          ]
+        },
       ],
     },
     footer: {
