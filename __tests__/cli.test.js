@@ -681,3 +681,30 @@ describe('CLI main 参数解析', () => {
     expect(existsSync(join(tmpDir, '.dsh', 'skills', 'disk-clean', 'SKILL.md'))).toBe(true)
   })
 })
+
+describe('CLI listSkills 平台展示', () => {
+  let tmpDir
+  let logSpy
+
+  beforeEach(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), 'sunbirder-test-'))
+    process.env.HOME = tmpDir
+    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    process.env.HOME = realHome
+    logSpy.mockRestore()
+  })
+
+  it('输出平台目标列表（含 claude 与 dsh）', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    const { listSkills } = await import('../bin/cli.js')
+    listSkills()
+    const out = logSpy.mock.calls.map(c => c.join(' ')).join('\n')
+    expect(out).toContain('安装目标')
+    expect(out).toContain('[claude]')
+    expect(out).toContain('[dsh]')
+    expect(out).toContain('仅技能')
+  })
+})

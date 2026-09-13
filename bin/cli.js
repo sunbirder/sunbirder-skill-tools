@@ -14,14 +14,6 @@ function getHome() {
   return process.env.HOME || process.env.USERPROFILE
 }
 
-function getSkillsTarget() {
-  return join(getHome(), '.claude', 'skills')
-}
-
-function getCommandsTarget() {
-  return join(getHome(), '.claude', 'commands')
-}
-
 // 平台表 — 单一事实来源；未来加平台 = 数组加一项
 // dsh 技能格式与 Claude Code 完全兼容（<name>/SKILL.md），且 dsh 技能即斜杠命令，无命令目录
 const PLATFORMS = [
@@ -251,7 +243,13 @@ function installAll(platformArg) {
 }
 
 function listSkills() {
-  console.log('可用技能：\n')
+  console.log('安装目标：\n')
+  for (const p of PLATFORMS) {
+    const homeDir = join(getHome(), p.home)
+    const status = existsSync(homeDir) ? '✓' : '✗（未检测到）'
+    console.log(`  [${p.id}] ${homeDir} ${status}${p.commands ? '' : '（仅技能）'}`)
+  }
+  console.log('\n可用技能：\n')
   for (const skill of loadSkills()) {
     console.log(`  ${skill.name.padEnd(30)} ${skill.description}`)
   }
@@ -262,13 +260,17 @@ function listSkills() {
 }
 
 function showHelp() {
-  console.log(`sunbirder-skills — 个人 Claude Code 技能工具集
+  console.log(`sunbirder-skills — 个人技能工具集（Claude Code + DeepSeek Harness）
 
 用法:
-  sunbirder-skills install          安装全部技能和命令
-  sunbirder-skills upgrade          拉取最新代码并重新安装
-  sunbirder-skills add <skill>       安装指定技能
-  sunbirder-skills list              列出可用技能
+  sunbirder-skills install [--platform claude|dsh]      安装全部技能和命令
+  sunbirder-skills upgrade [--platform claude|dsh]      拉取最新代码并重新安装
+  sunbirder-skills add <skill> [--platform claude|dsh]  安装指定技能
+  sunbirder-skills list              列出可用技能与安装目标
+
+说明:
+  默认安装到所有检测到的平台（按 home 目录是否存在判定）；
+  --platform 可指定单一平台，但目标平台不存在时同样跳过。
 
 快捷方式（兼容旧版）:
   sunbirder-skills --all             等同于 install
@@ -297,6 +299,7 @@ function main(argv) {
   if (args.length === 0) {
     showHelp()
     process.exit(0)
+    return
   }
 
   const arg = args[0]
@@ -334,6 +337,7 @@ function main(argv) {
         console.error(`错误：未知选项 "${arg}"`)
         console.error('使用 list 查看可用技能，或 --help 查看帮助')
         process.exit(1)
+        return
       }
       break
   }
@@ -357,11 +361,12 @@ function installSkillByName(skillName, platformArg) {
     console.error(`错误：未知技能 "${skillName}"`)
     console.error('使用 list 查看可用技能')
     process.exit(1)
+    return
   }
 }
 
 // 导出函数供测试使用
-export { loadSkills, loadCommands, installSkill, installCommand, installAll, upgradeAll, getPackageDir, resolveTargetPlatforms, extractPlatform, PLATFORMS, main }
+export { loadSkills, loadCommands, installSkill, installCommand, installAll, upgradeAll, getPackageDir, resolveTargetPlatforms, extractPlatform, PLATFORMS, listSkills, main }
 
 // 直接运行时执行 CLI
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
