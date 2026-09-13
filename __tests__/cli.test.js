@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, existsSync } from 'fs'
+import { mkdtempSync, readFileSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { tmpdir } from 'os'
 import { jest } from '@jest/globals'
@@ -466,5 +466,64 @@ describe('CLI upgradeAll', () => {
     expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'discuss.md'))).toBe(true)
     expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'docs-sync.md'))).toBe(true)
     expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'doc-gen.md'))).toBe(true)
+  })
+})
+
+describe('resolveTargetPlatforms', () => {
+  let tmpDir
+
+  beforeEach(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), 'sunbirder-test-'))
+    process.env.HOME = tmpDir
+    process.exit = jest.fn()
+  })
+
+  afterEach(() => {
+    process.env.HOME = realHome
+    process.exit = realExit
+  })
+
+  it('双目录存在 → 返回双平台', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    mkdirSync(join(tmpDir, '.dsh'), { recursive: true })
+    const { resolveTargetPlatforms } = await import('../bin/cli.js')
+    const { targets, skipped } = resolveTargetPlatforms()
+    expect(targets.map(p => p.id)).toEqual(['claude', 'dsh'])
+    expect(skipped).toEqual([])
+  })
+
+  it('仅 .claude 存在 → 仅 claude，dsh 进 skipped', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    const { resolveTargetPlatforms } = await import('../bin/cli.js')
+    const { targets, skipped } = resolveTargetPlatforms()
+    expect(targets.map(p => p.id)).toEqual(['claude'])
+    expect(skipped).toEqual([{ id: 'dsh', homeDir: join(tmpDir, '.dsh') }])
+  })
+
+  it('仅 .dsh 存在 → 仅 dsh', async () => {
+    mkdirSync(join(tmpDir, '.dsh'), { recursive: true })
+    const { resolveTargetPlatforms } = await import('../bin/cli.js')
+    const { targets } = resolveTargetPlatforms()
+    expect(targets.map(p => p.id)).toEqual(['dsh'])
+  })
+
+  it('目录都不存在 → 空目标，全部进 skipped', async () => {
+    const { resolveTargetPlatforms } = await import('../bin/cli.js')
+    const { targets, skipped } = resolveTargetPlatforms()
+    expect(targets).toEqual([])
+    expect(skipped.map(s => s.id)).toEqual(['claude', 'dsh'])
+  })
+
+  it('--platform dsh 指定但目录不存在 → 同样跳过（不强制创建）', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    const { resolveTargetPlatforms } = await import('../bin/cli.js')
+    const { targets } = resolveTargetPlatforms('dsh')
+    expect(targets).toEqual([])
+  })
+
+  it('未知平台名 → 报错并 exit(1)', async () => {
+    const { resolveTargetPlatforms } = await import('../bin/cli.js')
+    resolveTargetPlatforms('codex')
+    expect(process.exit).toHaveBeenCalledWith(1)
   })
 })

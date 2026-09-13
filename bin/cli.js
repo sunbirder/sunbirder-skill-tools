@@ -22,6 +22,37 @@ function getCommandsTarget() {
   return join(getHome(), '.claude', 'commands')
 }
 
+// 平台表 — 单一事实来源；未来加平台 = 数组加一项
+// dsh 技能格式与 Claude Code 完全兼容（<name>/SKILL.md），且 dsh 技能即斜杠命令，无命令目录
+const PLATFORMS = [
+  { id: 'claude', home: '.claude', commands: true },  // 技能 + 命令
+  { id: 'dsh', home: '.dsh', commands: false },       // 仅技能
+]
+
+// 解析安装目标平台：platformArg 为空 → 遍历平台表按目录存在性过滤；
+// 指定平台 → 同样过存在性检查（不存在则跳过，不强制创建）；未知平台名 → 报错退出
+function resolveTargetPlatforms(platformArg) {
+  const selected = platformArg
+    ? PLATFORMS.filter(p => p.id === platformArg)
+    : PLATFORMS
+  if (platformArg && selected.length === 0) {
+    console.error(`错误：未知平台 "${platformArg}"，可选值：${PLATFORMS.map(p => p.id).join(' | ')}`)
+    process.exit(1)
+    return { targets: [], skipped: [] }
+  }
+  const targets = []
+  const skipped = []
+  for (const p of selected) {
+    const homeDir = join(getHome(), p.home)
+    if (existsSync(homeDir)) {
+      targets.push(p)
+    } else {
+      skipped.push({ id: p.id, homeDir })
+    }
+  }
+  return { targets, skipped }
+}
+
 // 技能列表
 const SKILL_LIST = [
   {
@@ -286,7 +317,7 @@ function installSkillByName(skillName) {
 }
 
 // 导出函数供测试使用
-export { loadSkills, loadCommands, installSkill, installCommand, installAll, upgradeAll, getPackageDir }
+export { loadSkills, loadCommands, installSkill, installCommand, installAll, upgradeAll, getPackageDir, PLATFORMS, resolveTargetPlatforms }
 
 // 直接运行时执行 CLI
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
