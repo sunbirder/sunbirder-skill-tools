@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, existsSync, mkdirSync } from 'fs'
+import { mkdtempSync, readFileSync, existsSync, mkdirSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { tmpdir } from 'os'
 import { jest } from '@jest/globals'
@@ -288,6 +288,7 @@ describe('CLI installSkill', () => {
   beforeEach(() => {
     tmpDir = mkdtempSync(join(tmpdir(), 'sunbirder-test-'))
     process.env.HOME = tmpDir
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
     process.exit = jest.fn()
   })
 
@@ -443,6 +444,7 @@ describe('CLI upgradeAll', () => {
   beforeEach(() => {
     tmpDir = mkdtempSync(join(tmpdir(), 'sunbirder-test-'))
     process.env.HOME = tmpDir
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
     process.exit = jest.fn()
   })
 
@@ -525,5 +527,63 @@ describe('resolveTargetPlatforms', () => {
     const { resolveTargetPlatforms } = await import('../bin/cli.js')
     resolveTargetPlatforms('codex')
     expect(process.exit).toHaveBeenCalledWith(1)
+  })
+})
+
+describe('CLI 多平台安装', () => {
+  let tmpDir
+
+  beforeEach(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), 'sunbirder-test-'))
+    process.env.HOME = tmpDir
+    process.exit = jest.fn()
+  })
+
+  afterEach(() => {
+    process.env.HOME = realHome
+    process.exit = realExit
+  })
+
+  function prepareBothPlatforms() {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    mkdirSync(join(tmpDir, '.dsh'), { recursive: true })
+  }
+
+  it('双平台存在 → 技能写入两边', async () => {
+    prepareBothPlatforms()
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('discuss')
+    expect(existsSync(join(tmpDir, '.claude', 'skills', 'discuss', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.dsh', 'skills', 'discuss', 'SKILL.md'))).toBe(true)
+  })
+
+  it('命令只写入 claude，dsh 不产生 commands 目录', async () => {
+    prepareBothPlatforms()
+    const { installCommand } = await import('../bin/cli.js')
+    installCommand('skill:discuss')
+    expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'discuss.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.dsh', 'commands'))).toBe(false)
+  })
+
+  it('dsh 目录不存在 → 默认只写 claude，且不创建 .dsh', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('discuss')
+    expect(existsSync(join(tmpDir, '.claude', 'skills', 'discuss', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.dsh'))).toBe(false)
+  })
+
+  it('显式传入 targets 时不再做存在性解析', async () => {
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('discuss', [{ id: 'dsh', home: '.dsh', commands: false }])
+    expect(existsSync(join(tmpDir, '.dsh', 'skills', 'discuss', 'SKILL.md'))).toBe(true)
+  })
+
+  it('单平台写入失败 → 警告继续，不抛异常', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    // 在 skills 目录位置放一个文件，迫使 mkdirSync 失败
+    writeFileSync(join(tmpDir, '.claude', 'skills'), 'blocker')
+    const { installSkill } = await import('../bin/cli.js')
+    expect(() => installSkill('discuss')).not.toThrow()
   })
 })

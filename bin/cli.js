@@ -145,47 +145,59 @@ function loadCommands() {
   return COMMAND_LIST
 }
 
-function installSkill(skillName) {
+function installSkill(skillName, targets = resolveTargetPlatforms().targets) {
   const pkgDir = getPackageDir()
   const src = join(pkgDir, 'skills', skillName)
-  const dest = join(getSkillsTarget(), skillName)
 
   if (!existsSync(src)) {
     console.error(`错误：技能 "${skillName}" 不存在`)
     process.exit(1)
+    return
   }
 
-  mkdirSync(dest, { recursive: true })
-
-  // 复制 SKILL.md
-  const skillFile = join(src, 'SKILL.md')
-  if (existsSync(skillFile)) {
-    writeFileSync(join(dest, 'SKILL.md'), readFileSync(skillFile))
-    console.log(`  ✓ 已安装技能: ${skillName}`)
+  for (const platform of targets) {
+    const dest = join(getHome(), platform.home, 'skills', skillName)
+    try {
+      mkdirSync(dest, { recursive: true })
+      const skillFile = join(src, 'SKILL.md')
+      if (existsSync(skillFile)) {
+        writeFileSync(join(dest, 'SKILL.md'), readFileSync(skillFile))
+        console.log(`  [${platform.id}] ✓ 已安装技能: ${skillName}`)
+      }
+    } catch (err) {
+      console.warn(`  [${platform.id}] ⚠ 写入失败，已跳过该平台: ${err.message}`)
+    }
   }
 }
 
-function installCommand(commandName) {
+function installCommand(commandName, targets = resolveTargetPlatforms().targets) {
   const pkgDir = getPackageDir()
   // commandName 格式: "category:name"，文件路径: commands/category/name.md
   const parts = commandName.split(':')
   const srcPath = parts.length > 1
     ? join(pkgDir, 'commands', parts[0], `${parts[1]}.md`)
     : join(pkgDir, 'commands', `${commandName}.md`)
-  const destDir = parts.length > 1
-    ? join(getCommandsTarget(), parts[0])
-    : getCommandsTarget()
-  const destName = parts.length > 1 ? parts[parts.length - 1] : commandName
-  const dest = join(destDir, `${destName}.md`)
 
   if (!existsSync(srcPath)) {
     console.error(`错误：命令 "${commandName}" 不存在`)
     process.exit(1)
+    return
   }
 
-  mkdirSync(destDir, { recursive: true })
-  writeFileSync(dest, readFileSync(srcPath))
-  console.log(`  ✓ 已安装命令: /${commandName}`)
+  for (const platform of targets) {
+    if (!platform.commands) continue // dsh 技能即命令，无命令目录
+    const destDir = parts.length > 1
+      ? join(getHome(), platform.home, 'commands', parts[0])
+      : join(getHome(), platform.home, 'commands')
+    const destName = parts.length > 1 ? parts[parts.length - 1] : commandName
+    try {
+      mkdirSync(destDir, { recursive: true })
+      writeFileSync(join(destDir, `${destName}.md`), readFileSync(srcPath))
+      console.log(`  [${platform.id}] ✓ 已安装命令: /${commandName}`)
+    } catch (err) {
+      console.warn(`  [${platform.id}] ⚠ 写入失败，已跳过该平台: ${err.message}`)
+    }
+  }
 }
 
 function upgradeAll() {
