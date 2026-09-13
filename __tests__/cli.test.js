@@ -602,14 +602,19 @@ describe('CLI installAll 平台接线', () => {
     process.exit = realExit
   })
 
-  it('仅 .claude 存在 → 技能命令写入 claude，不创建 .dsh', async () => {
+  it('仅 .claude 存在 → 技能命令写入 claude、不创建 .dsh，并输出跳过行', async () => {
     mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    const logSpy = jest.spyOn(console, 'log')
     const { installAll } = await import('../bin/cli.js')
     installAll()
+    const out = logSpy.mock.calls.map(c => c.join(' ')).join('\n')
+    logSpy.mockRestore()
     expect(existsSync(join(tmpDir, '.claude', 'skills', 'disk-clean', 'SKILL.md'))).toBe(true)
     expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'disk-clean.md'))).toBe(true)
     expect(existsSync(join(tmpDir, '.dsh'))).toBe(false)
     expect(process.exit).not.toHaveBeenCalled()
+    expect(out).toContain('跳过 dsh')
+    expect(out).toContain('.dsh 不存在')
   })
 
   it('双平台存在 → dsh 有技能无命令', async () => {

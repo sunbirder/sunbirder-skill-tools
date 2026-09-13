@@ -240,6 +240,9 @@ function installAll(platformArg) {
     const extra = p.commands ? ` + ${loadCommands().length} 个命令` : ''
     console.log(`  [${p.id}] ✓ ${loadSkills().length} 个技能${extra}`)
   }
+  for (const s of skipped) {
+    console.log(`  跳过 ${s.id}（${s.homeDir} 不存在）`)
+  }
 }
 
 function listSkills() {
