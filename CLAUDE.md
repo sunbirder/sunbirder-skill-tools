@@ -11,9 +11,11 @@
 
 ## 架构
 
-- `bin/cli.js` — CLI 入口，负责安装技能到 `~/.claude/skills/<name>/SKILL.md`
-- `skills/` — 技能定义（Markdown + YAML frontmatter）
-- `commands/` — 斜杠命令（Markdown + YAML frontmatter）
+- `bin/cli.js` — CLI 入口，多平台安装：默认安装到所有检测到的平台（按 home 目录存在判定），`--platform claude|dsh` 可指定单一平台
+  - Claude Code：技能 → `~/.claude/skills/`，命令 → `~/.claude/commands/`
+  - DeepSeek Harness：技能 → `~/.dsh/skills/`（dsh 技能即斜杠命令，无命令目录）
+- `skills/` — 技能定义（Markdown + YAML frontmatter），格式与两个平台兼容，无需按平台区分
+- `commands/` — 斜杠命令（Markdown + YAML frontmatter，仅 Claude Code 使用）
 - `docs/` — VitePress 文档站点
 
 ## 约束

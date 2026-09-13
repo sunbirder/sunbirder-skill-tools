@@ -1,6 +1,6 @@
 # sunbirder-skill-tools
 
-个人 Claude Code 技能工具集，可通过 `npx` 或 `git clone` 安装到任意机器。
+个人技能工具集，支持 Claude Code 与 DeepSeek Harness 双平台，可通过 `npx` 或 `git clone` 安装到任意机器。
 
 ## 安装
 
@@ -15,6 +15,13 @@ npx sunbirder/sunbirder-skill-tools add vitepress-doc-site
 git clone <repo-url> && cd sunbirder-skill-tools
 node bin/cli.js install
 ```
+
+### 平台说明
+
+- 默认安装到所有检测到的平台（按 `~/.claude` / `~/.dsh` 目录是否存在判定），平台不存在则自动跳过
+- `--platform claude|dsh` 可指定单一平台（目标平台不存在时同样跳过）
+- Claude Code：技能装到 `~/.claude/skills/`，斜杠命令装到 `~/.claude/commands/`
+- DeepSeek Harness：技能装到 `~/.dsh/skills/`（dsh 中技能即斜杠命令，无需单独的命令目录）
 
 ## 技能列表
 
@@ -51,10 +58,10 @@ node bin/cli.js install
 ## 命令
 
 ```bash
-sunbirder-skills install               # 安装全部技能
-sunbirder-skills upgrade               # 拉取最新代码并重新安装
-sunbirder-skills add <name>            # 安装指定技能
-sunbirder-skills list                  # 列出可用技能
+sunbirder-skills install [--platform claude|dsh]      # 安装全部技能
+sunbirder-skills upgrade [--platform claude|dsh]      # 拉取最新代码并重新安装
+sunbirder-skills add <name> [--platform claude|dsh]   # 安装指定技能
+sunbirder-skills list                                 # 列出可用技能与安装目标
 ```
 
 ## 开发
