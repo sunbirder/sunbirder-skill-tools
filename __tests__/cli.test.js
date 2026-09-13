@@ -587,3 +587,97 @@ describe('CLI 多平台安装', () => {
     expect(() => installSkill('discuss')).not.toThrow()
   })
 })
+
+describe('CLI installAll 平台接线', () => {
+  let tmpDir
+
+  beforeEach(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), 'sunbirder-test-'))
+    process.env.HOME = tmpDir
+    process.exit = jest.fn()
+  })
+
+  afterEach(() => {
+    process.env.HOME = realHome
+    process.exit = realExit
+  })
+
+  it('仅 .claude 存在 → 技能命令写入 claude，不创建 .dsh', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    const { installAll } = await import('../bin/cli.js')
+    installAll()
+    expect(existsSync(join(tmpDir, '.claude', 'skills', 'disk-clean', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.claude', 'commands', 'skill', 'disk-clean.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.dsh'))).toBe(false)
+    expect(process.exit).not.toHaveBeenCalled()
+  })
+
+  it('双平台存在 → dsh 有技能无命令', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    mkdirSync(join(tmpDir, '.dsh'), { recursive: true })
+    const { installAll } = await import('../bin/cli.js')
+    installAll()
+    expect(existsSync(join(tmpDir, '.dsh', 'skills', 'disk-clean', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.dsh', 'commands'))).toBe(false)
+  })
+
+  it('目录都不存在 → exit(1)，不创建任何目录', async () => {
+    const { installAll } = await import('../bin/cli.js')
+    installAll()
+    expect(process.exit).toHaveBeenCalledWith(1)
+    expect(existsSync(join(tmpDir, '.claude'))).toBe(false)
+    expect(existsSync(join(tmpDir, '.dsh'))).toBe(false)
+  })
+
+  it('--platform dsh 只装 dsh，不碰 claude', async () => {
+    mkdirSync(join(tmpDir, '.claude'), { recursive: true })
+    mkdirSync(join(tmpDir, '.dsh'), { recursive: true })
+    const { installAll } = await import('../bin/cli.js')
+    installAll('dsh')
+    expect(existsSync(join(tmpDir, '.dsh', 'skills', 'discuss', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(tmpDir, '.claude', 'skills'))).toBe(false)
+  })
+})
+
+describe('CLI main 参数解析', () => {
+  let tmpDir
+
+  beforeEach(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), 'sunbirder-test-'))
+    process.env.HOME = tmpDir
+    process.exit = jest.fn()
+  })
+
+  afterEach(() => {
+    process.env.HOME = realHome
+    process.exit = realExit
+  })
+
+  it('extractPlatform 摘出 --platform 及其值', async () => {
+    const { extractPlatform } = await import('../bin/cli.js')
+    const { args, platformArg } = extractPlatform(['install', '--platform', 'dsh'])
+    expect(args).toEqual(['install'])
+    expect(platformArg).toBe('dsh')
+  })
+
+  it('无 --platform 时原样返回', async () => {
+    const { extractPlatform } = await import('../bin/cli.js')
+    const { args, platformArg } = extractPlatform(['install'])
+    expect(args).toEqual(['install'])
+    expect(platformArg).toBeUndefined()
+  })
+
+  it('main: install --platform dsh → 技能进 dsh', async () => {
+    mkdirSync(join(tmpDir, '.dsh'), { recursive: true })
+    const { main } = await import('../bin/cli.js')
+    main(['node', 'cli', 'install', '--platform', 'dsh'])
+    expect(existsSync(join(tmpDir, '.dsh', 'skills', 'discuss', 'SKILL.md'))).toBe(true)
+  })
+
+  it('main: add <skill> --platform dsh → 指定技能进 dsh', async () => {
+    mkdirSync(join(tmpDir, '.dsh'), { recursive: true })
+    const { main } = await import('../bin/cli.js')
+    main(['node', 'cli', 'add', 'disk-clean', '--platform', 'dsh'])
+    expect(existsSync(join(tmpDir, '.dsh', 'skills', 'disk-clean', 'SKILL.md'))).toBe(true)
+  })
+})

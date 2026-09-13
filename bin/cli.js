@@ -200,7 +200,7 @@ function installCommand(commandName, targets = resolveTargetPlatforms().targets)
   }
 }
 
-function upgradeAll() {
+function upgradeAll(platformArg) {
   const pkgDir = getPackageDir()
   const gitDir = join(pkgDir, '.git')
 
@@ -216,23 +216,38 @@ function upgradeAll() {
   }
 
   console.log('')
-  installAll()
+  installAll(platformArg)
 }
 
-function installAll() {
+function installAll(platformArg) {
+  const { targets, skipped } = resolveTargetPlatforms(platformArg)
+
+  if (targets.length === 0) {
+    console.error('未安装任何内容：未检测到已存在的平台目录')
+    for (const s of skipped) {
+      console.error(`  跳过 ${s.id}（${s.homeDir} 不存在）`)
+    }
+    process.exit(1)
+    return
+  }
+
   console.log('安装 sunbirder-skill-tools...\n')
 
   console.log('[Skills]')
   for (const skill of loadSkills()) {
-    installSkill(skill.name)
+    installSkill(skill.name, targets)
   }
 
   console.log('\n[Commands]')
   for (const cmd of loadCommands()) {
-    installCommand(cmd.name)
+    installCommand(cmd.name, targets)
   }
 
   console.log('\n安装完成！')
+  for (const p of targets) {
+    const extra = p.commands ? ` + ${loadCommands().length} 个命令` : ''
+    console.log(`  [${p.id}] ✓ ${loadSkills().length} 个技能${extra}`)
+  }
 }
 
 function listSkills() {
@@ -266,8 +281,18 @@ npx 安装:
   npx sunbirder/sunbirder-skill-tools add vitepress-doc-site`)
 }
 
+// 从参数中摘出 --platform <id>，返回剩余位置参数与平台参数
+function extractPlatform(args) {
+  const idx = args.indexOf('--platform')
+  if (idx === -1) return { args, platformArg: undefined }
+  return {
+    args: args.slice(0, idx).concat(args.slice(idx + 2)),
+    platformArg: args[idx + 1],
+  }
+}
+
 function main(argv) {
-  const args = argv.slice(2)
+  const { args, platformArg } = extractPlatform(argv.slice(2))
 
   if (args.length === 0) {
     showHelp()
@@ -280,18 +305,19 @@ function main(argv) {
   switch (arg) {
     case 'install':
     case '--all':
-      installAll()
+      installAll(platformArg)
       break
     case 'upgrade':
-      upgradeAll()
+      upgradeAll(platformArg)
       break
     case 'add':
       if (!target) {
         console.error('错误：请指定要安装的技能名称')
         listSkills()
         process.exit(1)
+        return
       }
-      installSkillByName(target)
+      installSkillByName(target, platformArg)
       break
     case 'list':
     case '--list':
@@ -303,7 +329,7 @@ function main(argv) {
     default:
       // 尝试将 arg 当作技能名安装
       if (!arg.startsWith('--')) {
-        installSkillByName(arg)
+        installSkillByName(arg, platformArg)
       } else {
         console.error(`错误：未知选项 "${arg}"`)
         console.error('使用 list 查看可用技能，或 --help 查看帮助')
@@ -313,14 +339,20 @@ function main(argv) {
   }
 }
 
-function installSkillByName(skillName) {
+function installSkillByName(skillName, platformArg) {
+  const { targets } = resolveTargetPlatforms(platformArg)
+  if (targets.length === 0) {
+    console.error('未安装任何内容：未检测到已存在的平台目录')
+    process.exit(1)
+    return
+  }
   const skillNames = loadSkills().map(s => s.name)
   const cmdNames = loadCommands().map(c => c.name)
   if (skillNames.includes(skillName)) {
-    installSkill(skillName)
+    installSkill(skillName, targets)
     // 同时安装对应命令
     const cmd = cmdNames.find(c => c.includes(skillName))
-    if (cmd) installCommand(cmd)
+    if (cmd) installCommand(cmd, targets)
   } else {
     console.error(`错误：未知技能 "${skillName}"`)
     console.error('使用 list 查看可用技能')
@@ -329,7 +361,7 @@ function installSkillByName(skillName) {
 }
 
 // 导出函数供测试使用
-export { loadSkills, loadCommands, installSkill, installCommand, installAll, upgradeAll, getPackageDir, PLATFORMS, resolveTargetPlatforms }
+export { loadSkills, loadCommands, installSkill, installCommand, installAll, upgradeAll, getPackageDir, resolveTargetPlatforms, extractPlatform, PLATFORMS, main }
 
 // 直接运行时执行 CLI
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
