@@ -16,3 +16,86 @@ body .VPDoc .content-container,
 body .VPDoc.has-aside .content-container.content-container {
   max-width: 100%;
 }
+
+/* ============ 二、表格增强 ============ */
+/* 横滚基线：原地表格可横向滚动；hover 右上角浮出 ⤢ 按钮 */
+.vp-table-scroll {
+  position: relative;
+  overflow-x: auto;
+}
+
+.vp-table-max-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 5;
+  width: 26px;
+  height: 26px;
+  line-height: 1;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-2);
+}
+
+.vp-table-scroll:hover .vp-table-max-btn,
+.vp-table-max-btn:focus-visible {
+  opacity: 1;
+}
+
+/* 近全屏弹窗（单例，由 enhance-tables.ts 创建与复用） */
+.vp-table-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.vp-table-overlay.is-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vp-table-overlay-panel {
+  display: flex;
+  flex-direction: column;
+  width: 95vw;
+  height: 90vh;
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vp-table-overlay-close {
+  align-self: flex-end;
+  margin: 8px 8px 0 0;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+
+.vp-table-overlay-body {
+  flex: 1;
+  overflow: auto;
+  padding: 0 24px 24px;
+}
+
+.vp-table-overlay-body table {
+  width: 100%;
+}
+
+/* 弹窗打开时锁定页面滚动 */
+body.vp-table-locked {
+  overflow: hidden;
+}
