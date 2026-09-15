@@ -1,0 +1,18 @@
+/* 文档站主题定制：内容加宽 + 表格增强 */
+/* 分节结构：一、布局加宽；二、表格增强（表格段由表格增强任务追加在文末） */
+
+/* ============ 一、布局加宽 ============ */
+/* 宽屏留白的两处真正瓶颈：
+   1) --vp-layout-max-width（VitePress 默认 1440px）：≥1440px 视口下整个文档
+      区的版心上限，2560px 屏上文档区实际被钉在 1168px；
+   2) .VPDoc.has-aside .content-container 的 scoped 规则（VPDoc.vue，688px，
+      特异性 0,4,0）：有右侧大纲时内容列被钉在 688px，须更高特异性覆盖
+      （body 前缀 + 重复类 = 0,4,1）。 */
+:root {
+  --vp-layout-max-width: 1920px;
+}
+
+body .VPDoc .content-container,
+body .VPDoc.has-aside .content-container.content-container {
+  max-width: 100%;
+}
