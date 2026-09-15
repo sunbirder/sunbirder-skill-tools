@@ -24,7 +24,9 @@ project/
     └── .vitepress/
         ├── config.ts         # 站点配置（核心文件）
         └── theme/
-            └── index.ts      # 主题扩展（注册全局组件）
+            ├── index.ts           # 主题扩展（引入 custom.css，setup() 调用 enhanceTables）
+            ├── custom.css         # 内置能力样式：内容加宽 + 表格增强
+            └── enhance-tables.ts  # 内置能力脚本：表格横滚 / ⤢ 弹窗最大化
 ```
 
 ## 快速搭建
@@ -154,19 +156,33 @@ export default withMermaid(
 
 `withMermaid()` 自动注入 Mermaid 支持，文档中可直接使用 ````mermaid` 代码块渲染流程图、时序图等。
 
-### 5. 主题扩展 (`docs/.vitepress/theme/index.ts`)
+### 5. 主题扩展（内置能力：内容加宽 + 表格增强）
+
+主题层内置两个开箱即用的能力，三份文件为固定模板，**新站点按源文件原样照抄**（源文件：sunbirder-skill-tools 仓库 `docs/.vitepress/theme/`）：
+
+- **内容加宽**：破除 VitePress 双重宽度钳制（`--vp-layout-max-width` 版心 1440px 上限 + `.VPDoc.has-aside .content-container` 的 688px scoped 规则），≥960px 视口内容列占文档主区约 80%
+- **表格增强**：所有 `.vp-doc` 表格横滚基线 + hover 右上角 ⤢ 按钮打开近全屏弹窗（95vw×90vh，ESC/遮罩/✕ 关闭），宽表列多时不再压缩展示
+
+不需要这两个能力的站点，删除 `index.ts` 中的 `import './custom.css'`、`setup()` 及两个文件即可。
+
+#### `docs/.vitepress/theme/index.ts`
 
 ```typescript
 import DefaultTheme from 'vitepress/theme'
+import { enhanceTables } from './enhance-tables'
+import './custom.css'
 
 export default {
   extends: DefaultTheme,
-  enhanceApp({ app }) {
-    // 注册全局 Vue 组件
-    // app.component('MyComponent', MyComponent)
-  }
+  setup() {
+    enhanceTables()
+  },
 }
 ```
+
+#### `docs/.vitepress/theme/custom.css` 与 `docs/.vitepress/theme/enhance-tables.ts`
+
+两份文件全文较长（合计约 200 行，分节注释齐全），**从源仓库原样复制，不得凭记忆重写**——誊抄失真是真实发生过的坑。执行本技能时用 Read 工具读取源仓库文件内容，用 Write 工具写入新项目同路径。
 
 ## 导航与侧边栏模式
 
@@ -262,6 +278,7 @@ docs/.vitepress/cache/
 | sidebar 不显示 | 检查当前页面路径是否匹配 sidebar 的 key |
 | 右侧目录不显示标题 | 确认 `outline.level` 包含对应标题级别 |
 | markdown 链接失效 | 相对路径用 `./` 开头，或用根路径 `/guide/xxx` |
+| 表格列太多显示不全 | 内置表格增强：原地横滚，或 hover 表格点右上角 ⤢ 打开全屏弹窗 |
 
 ### 踩坑实录（必须逐条规避）
 
