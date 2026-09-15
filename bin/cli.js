@@ -45,6 +45,10 @@ const SKILL_LIST = [
     description: '一站式 web 文档 — 生成完整文档集并搭建 VitePress 文档站',
   },
   {
+    name: 'sidebar-sync',
+    description: 'VitePress 侧边栏同步 — 补齐缺失菜单入口，清理死链',
+  },
+  {
     name: 'self-upgrade',
     description: '自升级 — 自动查找仓库拉取最新代码或通过 npx 升级',
   },
@@ -79,6 +83,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:docs-all-in-one',
     description: '一站式 web 文档 — 生成文档集并搭建 VitePress 文档站',
+  },
+  {
+    name: 'skill:sidebar-sync',
+    description: 'VitePress 侧边栏同步 — 补齐缺失菜单入口，清理死链',
   },
   {
     name: 'skill:self-upgrade',

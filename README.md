@@ -25,6 +25,7 @@ node bin/cli.js install
 | `docs-sync` | 文档与代码对齐 — 扫描变更、对比文档、修正过时 |
 | `doc-gen` | 项目文档生成 — 扫描代码，生成完整开发文档 |
 | `docs-all-in-one` | 一站式 web 文档 — 生成完整文档集并搭建 VitePress 文档站 |
+| `sidebar-sync` | VitePress 侧边栏同步 — 补齐缺失菜单入口，清理死链 |
 | `self-upgrade` | 自升级 — 自动查找仓库或 npx 升级到最新版 |
 | `wxapkg-unpack` | 微信小程序解包 — 解密 wxapkg 并反编译为可读工程 |
 | `disk-clean` | macOS 磁盘清理 — 排查大项、清理可再生缓存、大文件清单交用户决定 |
@@ -39,6 +40,7 @@ node bin/cli.js install
 /skill:docs-sync            # 项目文档与代码对齐
 /skill:doc-gen              # 根据项目生成完整开发文档
 /skill:docs-all-in-one       # 一站式：生成文档集 + 搭建文档站 + 启动预览
+/skill:sidebar-sync           # 侧边栏同步：补齐缺失菜单入口，清理死链
 /skill:self-upgrade          # 升级技能工具到最新版
 /skill:wxapkg-unpack         # 解密并反编译微信小程序包
 /skill:disk-clean            # macOS 磁盘清理

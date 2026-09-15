@@ -76,6 +76,13 @@ export default withMermaid(
             { text: '使用说明', link: '/guide/disk-clean' },
           ]
         },
+        {
+          text: 'sidebar-sync',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/sidebar-sync' },
+          ]
+        },
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },

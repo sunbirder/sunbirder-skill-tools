@@ -9,6 +9,7 @@
 | docs-sync | `/skill:docs-sync` | 文档与代码对齐 — 扫描变更、对比文档、修正过时 |
 | doc-gen | `/skill:doc-gen` | 项目文档生成 — 扫描代码，生成完整开发文档 |
 | docs-all-in-one | `/skill:docs-all-in-one` | 一站式 web 文档 — 生成文档集并搭建 VitePress 文档站 |
+| sidebar-sync | `/skill:sidebar-sync` | VitePress 侧边栏同步 — 补齐缺失菜单入口，清理死链 |
 | self-upgrade | `/skill:self-upgrade` | 自升级 — 自动查找仓库或 npx 升级到最新版 |
 | wxapkg-unpack | `/skill:wxapkg-unpack` | 微信小程序解包 — 解密 wxapkg 并反编译为可读工程 |
 | disk-clean | `/skill:disk-clean` | macOS 磁盘清理 — 排查大项、清理可再生缓存、大文件清单交用户决定 |

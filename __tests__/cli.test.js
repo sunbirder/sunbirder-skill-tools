@@ -79,6 +79,29 @@ describe('文件完整性', () => {
     expect(existsSync(path)).toBe(true)
   })
 
+  it('skills/sidebar-sync/SKILL.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'sidebar-sync', 'SKILL.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('commands/skill/sidebar-sync.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'commands', 'skill', 'sidebar-sync.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
+  it('sidebar-sync SKILL.md 包含侧边栏同步内容', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'skills', 'sidebar-sync', 'SKILL.md')
+    const content = readFileSync(path, 'utf8')
+    expect(content).toContain('侧边栏')
+    expect(content).toContain('死链')
+  })
+
   it('commands/skill/docs-all-in-one.md 存在', async () => {
     const { getPackageDir } = await import('../bin/cli.js')
     const pkgDir = getPackageDir()
@@ -178,6 +201,13 @@ describe('loadSkills', () => {
     expect(names).toContain('docs-all-in-one')
   })
 
+  it('包含 sidebar-sync', async () => {
+    const { loadSkills } = await import('../bin/cli.js')
+    const skills = loadSkills()
+    const names = skills.map(s => s.name)
+    expect(names).toContain('sidebar-sync')
+  })
+
   it('包含 self-upgrade', async () => {
     const { loadSkills } = await import('../bin/cli.js')
     const skills = loadSkills()
@@ -235,6 +265,13 @@ describe('loadCommands', () => {
     const commands = loadCommands()
     const names = commands.map(c => c.name)
     expect(names).toContain('skill:docs-all-in-one')
+  })
+
+  it('包含 skill:sidebar-sync', async () => {
+    const { loadCommands } = await import('../bin/cli.js')
+    const commands = loadCommands()
+    const names = commands.map(c => c.name)
+    expect(names).toContain('skill:sidebar-sync')
   })
 
   it('包含 skill:self-upgrade', async () => {
@@ -356,6 +393,26 @@ describe('CLI installSkill', () => {
 
     const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
     const targetFile = join(targetDir, 'docs-all-in-one.md')
+    expect(existsSync(targetFile)).toBe(true)
+  })
+
+  it('安装 sidebar-sync 技能', async () => {
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('sidebar-sync')
+
+    const targetFile = join(tmpDir, '.claude', 'skills', 'sidebar-sync', 'SKILL.md')
+    expect(existsSync(targetFile)).toBe(true)
+
+    const content = readFileSync(targetFile, 'utf8')
+    expect(content).toContain('侧边栏')
+  })
+
+  it('安装 sidebar-sync 命令', async () => {
+    const { installCommand } = await import('../bin/cli.js')
+    installCommand('skill:sidebar-sync')
+
+    const targetDir = join(tmpDir, '.claude', 'commands', 'skill')
+    const targetFile = join(targetDir, 'sidebar-sync.md')
     expect(existsSync(targetFile)).toBe(true)
   })
 
