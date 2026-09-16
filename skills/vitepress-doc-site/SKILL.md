@@ -117,9 +117,31 @@ features:
 
 ### 4. 配置 (`docs/.vitepress/config.ts`)
 
+模板内置中文分词的站内搜索（local search），导航栏搜索框 / ⌘K 唤起，可搜菜单名与正文内容。**必须注入自定义分词**：VitePress 默认分词不支持中文（中文整句是单 token，永远搜不到）。
+
 ```typescript
 import { defineConfig } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
+
+// 搜索分词：CJK 连续段二元切词（「中文分词」→ 中文/文分/分词；单字段保留单字），
+// 拉丁/数字连续段按词保留（小写化）。VitePress 1.6.4 默认分词不支持中文，必须注入。
+function tokenizeSearchText(text: string): string[] {
+  const out: string[] = []
+  const re = /[\p{Script=Han}぀-ヿ가-힯]+|[a-zA-Z0-9_]+/gu
+  for (const m of text.matchAll(re)) {
+    const s = m[0]
+    if (/^[\p{Script=Han}぀-ヿ가-힯]/u.test(s)) {
+      if (s.length === 1) {
+        out.push(s)
+      } else {
+        for (let i = 0; i < s.length - 1; i++) out.push(s.slice(i, i + 2))
+      }
+    } else {
+      out.push(s.toLowerCase())
+    }
+  }
+  return out
+}
 
 export default withMermaid(
   defineConfig({
@@ -138,6 +160,16 @@ export default withMermaid(
 
     themeConfig: {
       outline: { level: [2, 3] },
+      search: {
+        provider: 'local',
+        options: {
+          miniSearch: {
+            options: {
+              tokenize: tokenizeSearchText,
+            },
+          },
+        },
+      },
       nav: [
         { text: '首页', link: '/' },
         { text: '指南', link: '/guide/' },
@@ -279,6 +311,7 @@ docs/.vitepress/cache/
 | 右侧目录不显示标题 | 确认 `outline.level` 包含对应标题级别 |
 | markdown 链接失效 | 相对路径用 `./` 开头，或用根路径 `/guide/xxx` |
 | 表格列太多显示不全 | 内置表格增强：原地横滚，或 hover 表格点右上角 ⤢ 打开全屏弹窗 |
+| 站内搜索中文搜不到 | 模板已内置二元分词 tokenize；自写配置必须给 miniSearch 注入 tokenize，否则中文整句是单 token 永远搜不到 |
 
 ### 踩坑实录（必须逐条规避）
 
