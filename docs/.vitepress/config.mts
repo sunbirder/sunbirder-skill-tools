@@ -1,6 +1,26 @@
 import { defineConfig } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 
+// 搜索分词：CJK 连续段二元切词（「中文分词」→ 中文/文分/分词；单字段保留单字），
+// 拉丁/数字连续段按词保留（小写化）。VitePress 1.6.4 默认分词不支持中文，必须注入。
+function tokenizeSearchText(text: string): string[] {
+  const out: string[] = []
+  const re = /[\p{Script=Han}぀-ヿ가-힯]+|[a-zA-Z0-9_]+/gu
+  for (const m of text.matchAll(re)) {
+    const s = m[0]
+    if (/^[\p{Script=Han}぀-ヿ가-힯]/u.test(s)) {
+      if (s.length === 1) {
+        out.push(s)
+      } else {
+        for (let i = 0; i < s.length - 1; i++) out.push(s.slice(i, i + 2))
+      }
+    } else {
+      out.push(s.toLowerCase())
+    }
+  }
+  return out
+}
+
 export default withMermaid(
   defineConfig({
   title: 'sunbirder-skill-tools',
@@ -10,6 +30,16 @@ export default withMermaid(
 
   themeConfig: {
     outline: { level: [2, 3] },
+    search: {
+      provider: 'local',
+      options: {
+        miniSearch: {
+          options: {
+            tokenize: tokenizeSearchText,
+          },
+        },
+      },
+    },
     nav: [
       { text: '首页', link: '/' },
       { text: '使用指南', link: '/guide/' },
