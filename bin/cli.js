@@ -83,6 +83,10 @@ const SKILL_LIST = [
     name: 'disk-clean',
     description: 'macOS 磁盘清理 — 排查大项、清理可再生缓存、大文件清单交用户决定',
   },
+  {
+    name: 'completion-contract',
+    description: '生成完成契约 — 开工前钉死五字段验收协议,验收只认命令真实输出',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -122,6 +126,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:disk-clean',
     description: 'macOS 磁盘清理 — 排查大项并释放空间',
+  },
+  {
+    name: 'skill:completion-contract',
+    description: '生成完成契约 — 开工前钉死五字段验收协议,验收只认命令真实输出',
   },
 ]
 

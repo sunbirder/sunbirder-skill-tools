@@ -113,6 +113,13 @@ export default withMermaid(
             { text: '使用说明', link: '/guide/sidebar-sync' },
           ]
         },
+        {
+          text: 'completion-contract',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/completion-contract' },
+          ]
+        },
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },
