@@ -23,6 +23,7 @@ project/
     │   └── subdir/
     └── .vitepress/
         ├── config.ts         # 站点配置（核心文件）
+        ├── auto-sidebar.mjs  # 自动侧栏生成（可选，文件夹结构即菜单）
         └── theme/
             ├── index.ts           # 主题扩展（引入 custom.css，setup() 调用 enhanceTables）
             ├── custom.css         # 内置能力样式：内容加宽 + 表格增强
@@ -218,6 +219,36 @@ export default {
 
 ## 导航与侧边栏模式
 
+### 自动侧栏生成（推荐：结构性杜绝"菜单漏登记"）
+
+手写 sidebar 的固有问题是新文档忘了登记 → 页面无法从菜单到达（sidebar-sync 技能就是为此的事后修复）。自动侧栏让**文件夹结构即菜单**，新文件天然有入口。
+
+搭建新站时若文档按目录组织（无复杂分组语义），优先用自动侧栏：把源仓库 `docs/.vitepress/auto-sidebar.mjs`（约 120 行，零依赖）复制到新站同路径，config 中替换手写 sidebar：
+
+```typescript
+import { autoSidebar } from './auto-sidebar.mjs'
+
+sidebar: {
+  '/guide/': autoSidebar({
+    // rootDir 相对 config 所在的 .vitepress/ 目录
+    rootDir: new URL('../guide', import.meta.url).pathname,
+    routePrefix: '/guide/',
+    indexText: '快速开始',      // 可选：index.md 目录入口的文案
+    exclude: ['templates'],     // 可选：排除的目录/文件名
+  }),
+}
+```
+
+生成规则与实测行为：
+
+- 每个 .md 文件 = 一个菜单项；含 .md 的子目录 = 一个折叠分组（`collapsed: false`）；空目录/纯资源目录跳过
+- 标题优先级：frontmatter `title:` > 正文第一个 `# 标题` > 文件名（中文标题正常提取）
+- 目录的 `index.md` 渲染为直达链接（`indexText` 可改文案）
+- `exclude` 按路径段匹配（目录名或文件名不含 .md），如 `['templates']` 排除 templates 目录
+- **注意 rootDir 路径解析**：`new URL('../guide', import.meta.url)` 相对的是 `.vitepress/` 目录，即 `../guide` 指向 `docs/guide`；写错会报 `ENOENT: scandir`
+
+需要分组语义（如每个技能一组"使用说明"）或跨目录精细控制时，仍用手写 sidebar。
+
 ### 折叠组（适用于分类场景）
 
 ```typescript
@@ -306,7 +337,7 @@ docs/.vitepress/cache/
 
 | 问题 | 解决 |
 |------|------|
-| 新增页面 404 | 确认 sidebar 中添加了对应的 link 条目 |
+| 新增页面 404 | 手写 sidebar：确认添加了对应 link 条目；改用自动侧栏则天然不存在此问题 |
 | sidebar 不显示 | 检查当前页面路径是否匹配 sidebar 的 key |
 | 右侧目录不显示标题 | 确认 `outline.level` 包含对应标题级别 |
 | markdown 链接失效 | 相对路径用 `./` 开头，或用根路径 `/guide/xxx` |
