@@ -95,6 +95,19 @@ const SKILL_LIST = [
     name: 'prd-flow',
     description: 'PRD 八步工作流 — 澄清拷打→问题定义→范围圈定→用户故事→场景状态→PRD组装→评审预演→任务拆解',
   },
+  // 以下三个 vendor 自 anthropics/skills（Apache 2.0），原样保留便于上游 diff 同步
+  {
+    name: 'frontend-design',
+    description: '前端视觉设计 — 反AI模板脸的美学方向/排版/布局决策（vendor 自 anthropics/skills）',
+  },
+  {
+    name: 'canvas-design',
+    description: '视觉艺术设计 — 设计哲学驱动的海报/PDF/PNG 创作，含 81 个开源字体（vendor 自 anthropics/skills）',
+  },
+  {
+    name: 'theme-factory',
+    description: '主题工厂 — 10 个预设主题（色板+字体搭配）应用到幻灯片/文档/落地页（vendor 自 anthropics/skills）',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -146,6 +159,18 @@ const COMMAND_LIST = [
   {
     name: 'skill:prd-flow',
     description: 'PRD 八步工作流 — 澄清拷打→问题定义→范围圈定→用户故事→场景状态→PRD组装→评审预演→任务拆解',
+  },
+  {
+    name: 'skill:frontend-design',
+    description: '前端视觉设计 — 反AI模板脸的美学方向/排版/布局决策',
+  },
+  {
+    name: 'skill:canvas-design',
+    description: '视觉艺术设计 — 设计哲学驱动的海报/PDF/PNG 创作',
+  },
+  {
+    name: 'skill:theme-factory',
+    description: '主题工厂 — 10 个预设主题应用到幻灯片/文档/落地页',
   },
 ]
 

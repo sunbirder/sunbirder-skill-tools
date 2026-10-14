@@ -76,6 +76,7 @@ description: 按八步工作流辅助生成产品需求文档：澄清拷打→�
 | 需求方有基本想法、要快速收敛 | Step 01 默认用 grilling 决策树前沿批量问（见 question-playbook） |
 | Step 08 拆解出的关键任务需要可执行验收协议 | 对该任务调用 `completion-contract` 生成完成契约（outcome/verification/constraints/boundaries/stop_when） |
 | 需求已定、要对既有代码清点底座能力 | 底座资产清单可参照 `doc-gen` 的项目分析产出 |
+| Step 05 页面设计（PGE 工件）定稿后需要视觉稿/海报 | 对该页面调用 `frontend-design`（UI 视觉方案）或 `canvas-design`（海报/单图视觉稿）；PGE 五态与字段表即设计 brief |
 
 ## 路由
 

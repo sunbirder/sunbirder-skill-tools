@@ -134,6 +134,15 @@ export default withMermaid(
             { text: '使用说明', link: '/guide/prd-flow' },
           ]
         },
+        {
+          text: '设计能力（vendor 自 anthropics/skills）',
+          collapsed: false,
+          items: [
+            { text: 'frontend-design · 前端视觉设计', link: '/guide/frontend-design' },
+            { text: 'canvas-design · 视觉艺术设计', link: '/guide/canvas-design' },
+            { text: 'theme-factory · 主题工厂', link: '/guide/theme-factory' },
+          ]
+        },
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },
@@ -142,6 +151,20 @@ export default withMermaid(
           collapsed: false,
           items: [
             { text: '支持 DeepSeek Harness 平台', link: '/discussions/2026-09-13-dsh-platform-support' },
+          ]
+        },
+      ],
+      '/superpowers/': [
+        {
+          text: '历史方案（superpowers）',
+          collapsed: true,
+          items: [
+            { text: '设计 · DSH 平台支持', link: '/superpowers/specs/2026-09-13-dsh-platform-support-design' },
+            { text: '设计 · 文档站增强', link: '/superpowers/specs/2026-09-15-docs-site-enhancement-design' },
+            { text: '设计 · 文档站搜索', link: '/superpowers/specs/2026-09-16-docs-site-search-design' },
+            { text: '计划 · DSH 平台支持', link: '/superpowers/plans/2026-09-13-dsh-platform-support' },
+            { text: '计划 · 文档站增强', link: '/superpowers/plans/2026-09-15-docs-site-enhancement' },
+            { text: '计划 · 文档站搜索', link: '/superpowers/plans/2026-09-16-docs-site-search' },
           ]
         },
       ],
