@@ -1,0 +1,165 @@
+/* 布局皮肤 — 三栏布局解锁 + 宽屏侧栏钉宽居左 + 顶栏背景条跟随 + 面板显隐开关
+ *
+ * 思路源自 local-notes 项目 skin.css，选择器按 VitePress 1.6.4 源码实测重写
+ * （其原版针对 2.0-alpha 的 flex container，不能照抄）。
+ *
+ * 与 tables.css（表格增强）职责分离：本文件只管布局骨架。
+ *
+ * 解决的三类问题（全部真实存在于默认主题 ≥1440px 宽屏）：
+ * 1) 居中留白公式：默认主题给 VPSidebar/VPNavBar.title/VPContent 加
+ *    `padding-left: max(32px, (100% - (layout-max - 64px)) / 2)`，版心 1440px 时
+ *    该值在 2560px 屏上可达 (2560-1376)/2 = 592px —— 侧栏菜单条目悬在屏幕中间
+ * 2) 版心上限：--vp-layout-max-width（本项目 1920px，见 :root）限制整个文档区
+ * 3) 内容列钳制：.VPDoc.has-aside .content-container scoped 688px（特异性 0,4,0）
+ *
+ * 面板显隐开关（html 类由 enhance-layout.ts 写入）：
+ * - html.vp-sidebar-collapsed：左侧栏滑出隐藏
+ * - html.vp-aside-open：右侧大纲默认收起，此类展开
+ */
+
+:root {
+  /* 侧栏宽度变量：默认主题 --vp-sidebar-width 优先，缺省 17rem */
+  --layout-sidebar-w: var(--vp-sidebar-width, 17rem);
+  /* 右侧大纲宽度 */
+  --layout-aside-w: 18rem;
+}
+
+/* ============ 一、内容列解锁（≥960px 基线 + ≥1280px 三栏） ============ */
+
+/* 版心上限：从默认 1440px 提到 1920px */
+:root {
+  --vp-layout-max-width: 1920px;
+}
+
+/* 内容列解锁：破除 688px scoped 钳制（body 前缀 + 重复类 = 0,4,1 > 0,4,0） */
+body .VPDoc .content-container,
+body .VPDoc.has-aside .content-container.content-container {
+  max-width: 100%;
+}
+
+/* ≥1280px 三栏布局：中栏撑满，去掉 justify-content:center 的居中效果
+ * （1.6.4 的 .container 仍是块级 margin:0 auto + flex，居中来自 margin） */
+@media (min-width: 1280px) {
+  body .VPDoc .container {
+    max-width: 100%;
+    margin: 0;
+  }
+  body .VPDoc .content {
+    max-width: 100%;
+  }
+}
+
+/* ============ 二、右侧大纲列（≥1280px） ============ */
+
+/* 默认收起：html 无 .vp-aside-open 时隐藏大纲（容器仍渲染，SEO/SSR 完整） */
+@media (min-width: 1280px) {
+  html:not(.vp-aside-open) .VPDoc.has-aside .aside {
+    display: none !important;
+  }
+
+/* 展开时固定宽：1.6.4 的 .aside 是 flex 项（flex-grow:1 + max-width 256px 钳制），
+ * 须锁死 flex 基准与宽度，否则被中栏挤压/拉伸（实测 grow 时被撑到非预期宽度） */
+  html.vp-aside-open .VPDoc .aside {
+    width: var(--layout-aside-w) !important;
+    max-width: var(--layout-aside-w) !important;
+    flex: 0 0 var(--layout-aside-w) !important;
+    flex-grow: 0 !important;
+  }
+}
+
+/* ============ 三、左侧栏钉宽居左（≥960px 基线 + ≥1440px 破居中公式） ============ */
+
+@media (min-width: 960px) {
+  .VPSidebar {
+    width: var(--layout-sidebar-w) !important;
+    padding-left: 24px !important;
+    padding-right: 1.25rem !important;
+  }
+}
+
+/* ≥1440px 破除默认主题的居中留白公式（VPSidebar.vue:112-116）：
+ * padding-left: max(32px, (100% - (layout-max - 64px)) / 2)
+ * width: (100% - (layout-max - 64px)) / 2 + sidebar-width - 32px
+ * 该公式让宽屏下侧栏被撑宽数百 px、菜单条目悬在屏幕中间 */
+@media (min-width: 1440px) {
+  .VPSidebar {
+    padding-left: 24px !important;
+    width: var(--layout-sidebar-w) !important;
+  }
+
+  /* 内容区左 padding 固定为侧栏宽（默认公式同样含居中留白项） */
+  .VPContent.has-sidebar {
+    padding-left: var(--layout-sidebar-w) !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* ============ 四、顶栏（VPNavBar）跟随 ============ */
+
+/* 标题槽位收窄：默认 ≥1440px 给 .title 预留「留白 + 侧栏宽」槽位（VPNavBar.vue:160-165），
+ * 标题文字只占一小段，把导航内容推出去很远。收窄到内容宽 */
+@media (min-width: 1440px) {
+  .VPNavBar.has-sidebar .title {
+    padding-left: 24px !important;
+    width: auto !important;
+  }
+}
+
+/* ≥1280px 顶栏吃满：解开封顶与居中（wrapper 里的 max-width），只留对称边距 */
+@media (min-width: 1280px) {
+  .VPNavBar .wrapper {
+    max-width: 100% !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  .VPNavBar .container {
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+/* 背景条起点跟随侧栏宽度：默认主题 --vp-nav-col-offset（VPNavBar:before 用它定位）
+ * 宽屏下与侧栏对齐；侧栏收起时归零（由 .vp-sidebar-collapsed 联动）。
+ * 1.6.4 中该变量控制 :before 的 left —— 检查默认值存在性，不存在则用 0 兜底 */
+@media (min-width: 960px) {
+  .VPNavBar.has-sidebar:before {
+    width: var(--vp-nav-col-offset, var(--layout-sidebar-w)) !important;
+    transition: width 0.25s ease, background-color 0.25s;
+  }
+  html.vp-sidebar-collapsed .VPNavBar.has-sidebar:before {
+    width: 0 !important;
+  }
+}
+
+/* ============ 五、侧栏折叠动画（html.vp-sidebar-collapsed） ============ */
+
+/* 滑出而非 display:none（瞬间消失），内容区 padding 同步过渡；
+ * visibility 延迟到滑出结束再生效，避免动画期间菜单凭空消失 */
+@media (min-width: 960px) {
+  .VPSidebar {
+    transition: transform 0.25s ease, opacity 0.25s ease, visibility 0.25s;
+  }
+  .VPContent.has-sidebar {
+    transition: padding-left 0.25s ease, padding-right 0.25s ease;
+  }
+
+  html.vp-sidebar-collapsed .VPSidebar {
+    transform: translateX(-100%) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: transform 0.25s ease, opacity 0.25s ease,
+      visibility 0s linear 0.25s !important;
+  }
+
+  html.vp-sidebar-collapsed .VPContent.has-sidebar {
+    padding-left: 0 !important;
+  }
+
+  /* 90rem+ 默认主题还有基于 layout-max 的右侧 padding，收起时归零保持对称 */
+  @media (min-width: 90rem) {
+    html.vp-sidebar-collapsed .VPContent.has-sidebar {
+      padding-right: 0 !important;
+    }
+  }
+}

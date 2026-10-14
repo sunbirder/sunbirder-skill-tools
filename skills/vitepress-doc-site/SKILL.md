@@ -25,9 +25,11 @@ project/
         ├── config.ts         # 站点配置（核心文件）
         ├── auto-sidebar.mjs  # 自动侧栏生成（可选，文件夹结构即菜单）
         └── theme/
-            ├── index.ts           # 主题扩展（引入 custom.css，setup() 调用 enhanceTables）
-            ├── custom.css         # 内置能力样式：内容加宽 + 表格增强
-            └── enhance-tables.ts  # 内置能力脚本：表格横滚 / ⤢ 弹窗最大化
+            ├── index.ts           # 主题入口（layout.css + tables.css，setup 调两个 enhance）
+            ├── layout.css         # 内置布局皮肤：三栏解锁 + 侧栏钉宽 + 顶栏跟随 + 面板开关
+            ├── tables.css         # 内置能力样式：表格横滚 / ⤢ 弹窗最大化
+            ├── enhance-tables.ts  # 内置能力脚本：表格横滚包裹 + ⤢ 按钮弹窗
+            └── enhance-layout.ts  # 内置能力脚本：顶栏「侧栏/大纲」显隐开关
 ```
 
 ## 快速搭建
@@ -189,33 +191,51 @@ export default withMermaid(
 
 `withMermaid()` 自动注入 Mermaid 支持，文档中可直接使用 ````mermaid` 代码块渲染流程图、时序图等。
 
-### 5. 主题扩展（内置能力：内容加宽 + 表格增强）
+### 5. 主题扩展（内置能力：布局皮肤 + 表格增强）
 
-主题层内置两个开箱即用的能力，三份文件为固定模板，**新站点按源文件原样照抄**（源文件：sunbirder-skill-tools 仓库 `docs/.vitepress/theme/`）：
+主题层内置两块开箱即用的能力，源文件从 sunbirder-skill-tools 仓库 `docs/.vitepress/theme/` **原样照抄**，不得凭记忆重写——誊抄失真是真实发生过的坑。执行本技能时用 Read 工具读取源仓库文件内容，用 Write 工具写入新项目同路径：
 
-- **内容加宽**：破除 VitePress 双重宽度钳制（`--vp-layout-max-width` 版心 1440px 上限 + `.VPDoc.has-aside .content-container` 的 688px scoped 规则），≥960px 视口内容列占文档主区约 80%
-- **表格增强**：所有 `.vp-doc` 表格横滚基线 + hover 右上角 ⤢ 按钮打开近全屏弹窗（95vw×90vh，ESC/遮罩/✕ 关闭），宽表列多时不再压缩展示
+| 文件 | 职责 |
+|------|------|
+| `index.ts` | 主题入口：extends 默认主题，setup() 里调 enhanceTables() + enhanceLayout()，引入两个 css |
+| `layout.css` | 布局皮肤：三栏布局解锁 + 宽屏侧栏钉宽居左 + 顶栏背景条跟随 + 侧栏/大纲显隐开关 + 折叠动画 |
+| `tables.css` | 表格增强：横滚基线 + hover ⤢ 按钮 + 近全屏弹窗（95vw×90vh，ESC/遮罩/✕ 关闭） |
+| `enhance-tables.ts` | 表格增强脚本（横滚包裹 + 放大按钮 + 全屏弹窗，MutationObserver 补扫新表格） |
+| `enhance-layout.ts` | 面板显隐开关脚本：顶栏「侧栏/大纲」按钮，写 html 类 + localStorage 持久化 |
 
-不需要这两个能力的站点，删除 `index.ts` 中的 `import './custom.css'`、`setup()` 及两个文件即可。
+布局皮肤解决的默认主题宽屏问题（≥1440px 全部真实存在）：
+
+1. **侧栏菜单悬空居中**：默认主题给 VPSidebar/VPNavBar.title/VPContent 加 `max(32px, (100% - (layout-max - 64px)) / 2)` 居中留白公式，2560px 屏上该值可达 ~592px——侧栏菜单条目悬在屏幕中间。skin 锁死侧栏宽（17rem）、padding 24px、始终居左
+2. **内容列钳制**：`--vp-layout-max-width` 版心上限 + `.VPDoc.has-aside .content-container` 的 688px scoped 钳制，全解锁后内容向右撑满
+3. **大纲列挤压**：1.6.4 的 `.aside` 是 flex 项（flex-grow:1 + max-width 256px），不锁 `flex: 0 0` 会被挤窄；且默认展示改为「大纲」按钮控制（默认收起，容器仍渲染保 SEO）
+4. **顶栏跟随**：导航背景条宽度跟随侧栏，侧栏收起时归零，带 0.25s 过渡
+
+注意事项：
+- 侧栏/大纲按钮写的是 html 类，**不能直接在 theme setup() 里查 DOM 插入**——setup 在 Vue 组件 setup 阶段同步执行，此时 NavBar 尚未挂载（实测 document 里还没有 .VPNavBar），必须 MutationObserver 等 `.VPNavBar .content .content-body` 出现后再插入
+- 选择器按 VitePress **1.6.4** 实测适配（源自 local-notes 的 2.0-alpha flex container 写法不能照抄）；升级 VitePress 2 正式版时布局选择器需全部重验
+- 不需要此能力的站点：删除 `index.ts` 中对应 import/setup 与相应文件即可（layout.css+enhance-layout.ts 一组，tables.css+enhance-tables.ts 一组）
 
 #### `docs/.vitepress/theme/index.ts`
 
 ```typescript
 import DefaultTheme from 'vitepress/theme'
 import { enhanceTables } from './enhance-tables'
-import './custom.css'
+import { enhanceLayout } from './enhance-layout'
+import './layout.css'
+import './tables.css'
 
 export default {
   extends: DefaultTheme,
   setup() {
     enhanceTables()
+    enhanceLayout()
   },
 }
 ```
 
-#### `docs/.vitepress/theme/custom.css` 与 `docs/.vitepress/theme/enhance-tables.ts`
+#### 其余四份文件
 
-两份文件全文较长（合计约 200 行，分节注释齐全），**从源仓库原样复制，不得凭记忆重写**——誊抄失真是真实发生过的坑。执行本技能时用 Read 工具读取源仓库文件内容，用 Write 工具写入新项目同路径。
+`layout.css` / `tables.css` / `enhance-tables.ts` / `enhance-layout.ts` 全文较长（合计约 400 行，分节注释齐全），**从源仓库原样复制，不得凭记忆重写**。
 
 ## 导航与侧边栏模式
 

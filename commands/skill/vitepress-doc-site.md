@@ -33,7 +33,7 @@ argument-hint: [项目目录]
 - config 必须含：中文搜索（Intl.Segmenter tokenize，见技能模板）、withMermaid() 包装、optimizeDeps.include（fastdom 等）
 - 创建首页 `docs/index.md`（home layout）
 - 侧边栏：文档按目录组织时优先用自动侧栏（复制源仓库 `docs/.vitepress/auto-sidebar.mjs` 到新站）；需分组语义时手写
-- 复制主题三件套（index.ts / custom.css / enhance-tables.ts，从源仓库原样复制不得重写）
+- 复制主题五件套（index.ts / layout.css / tables.css / enhance-tables.ts / enhance-layout.ts，从源仓库原样复制不得重写）
 - 配置 npm scripts（dev/build/preview）
 
 ## 4. 启动预览

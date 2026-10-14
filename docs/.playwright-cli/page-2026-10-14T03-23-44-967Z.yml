@@ -1,0 +1,180 @@
+- generic [ref=e3]:
+  - link "Skip to content" [ref=e4] [cursor=pointer]:
+    - /url: "#VPContent"
+  - banner:
+    - generic:
+      - generic:
+        - generic:
+          - link "sunbirder-skill-tools" [ref=e6] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e7]: sunbirder-skill-tools
+          - generic [ref=e8]:
+            - button "Search" [ref=e11] [cursor=pointer]:
+              - generic [ref=e14]: Search
+              - generic [ref=e15]:
+                - generic [ref=e16]: ⌘
+                - generic [ref=e17]: K
+            - navigation "Main Navigation" [ref=e18]:
+              - generic [ref=e19]: Main Navigation
+              - link "首页" [ref=e20] [cursor=pointer]:
+                - /url: /
+                - generic [ref=e21]: 首页
+              - link "使用指南" [ref=e22] [cursor=pointer]:
+                - /url: /guide/
+                - generic [ref=e23]: 使用指南
+              - link "技能列表" [ref=e24] [cursor=pointer]:
+                - /url: /guide/skills.html
+                - generic [ref=e25]: 技能列表
+              - link "方案讨论" [ref=e26] [cursor=pointer]:
+                - /url: /discussions/
+                - generic [ref=e27]: 方案讨论
+            - switch "Switch to dark theme" [ref=e29] [cursor=pointer]
+  - complementary [ref=e34]:
+    - navigation "Sidebar Navigation" [ref=e36]:
+      - generic [ref=e37]: Sidebar Navigation
+      - generic [ref=e40]:
+        - link "快速开始" [ref=e44] [cursor=pointer]:
+          - /url: /guide/
+          - paragraph [ref=e45]: 快速开始
+        - link "技能列表" [ref=e49] [cursor=pointer]:
+          - /url: /guide/skills.html
+          - paragraph [ref=e50]: 技能列表
+      - generic [ref=e52]:
+        - button "vitepress-doc-site toggle section" [ref=e53] [cursor=pointer]:
+          - heading "vitepress-doc-site" [level=2] [ref=e55]
+          - button "toggle section" [ref=e56]
+        - link "使用说明" [ref=e62] [cursor=pointer]:
+          - /url: /guide/vitepress-doc-site.html
+          - paragraph [ref=e63]: 使用说明
+      - generic [ref=e65]:
+        - button "discuss toggle section" [ref=e66] [cursor=pointer]:
+          - heading "discuss" [level=2] [ref=e68]
+          - button "toggle section" [ref=e69]
+        - link "使用说明" [ref=e75] [cursor=pointer]:
+          - /url: /guide/discuss.html
+          - paragraph [ref=e76]: 使用说明
+      - generic [ref=e78]:
+        - button "docs-sync toggle section" [ref=e79] [cursor=pointer]:
+          - heading "docs-sync" [level=2] [ref=e81]
+          - button "toggle section" [ref=e82]
+        - link "使用说明" [ref=e88] [cursor=pointer]:
+          - /url: /guide/docs-sync.html
+          - paragraph [ref=e89]: 使用说明
+      - generic [ref=e91]:
+        - button "doc-gen toggle section" [ref=e92] [cursor=pointer]:
+          - heading "doc-gen" [level=2] [ref=e94]
+          - button "toggle section" [ref=e95]
+        - link "使用说明" [ref=e101] [cursor=pointer]:
+          - /url: /guide/doc-gen.html
+          - paragraph [ref=e102]: 使用说明
+      - generic [ref=e104]:
+        - button "docs-all-in-one toggle section" [ref=e105] [cursor=pointer]:
+          - heading "docs-all-in-one" [level=2] [ref=e107]
+          - button "toggle section" [ref=e108]
+        - link "使用说明" [ref=e114] [cursor=pointer]:
+          - /url: /guide/docs-all-in-one.html
+          - paragraph [ref=e115]: 使用说明
+      - generic [ref=e117]:
+        - button "self-upgrade toggle section" [ref=e118] [cursor=pointer]:
+          - heading "self-upgrade" [level=2] [ref=e120]
+          - button "toggle section" [ref=e121]
+        - link "使用说明" [ref=e127] [cursor=pointer]:
+          - /url: /guide/self-upgrade.html
+          - paragraph [ref=e128]: 使用说明
+      - generic [ref=e130]:
+        - button "wxapkg-unpack toggle section" [ref=e131] [cursor=pointer]:
+          - heading "wxapkg-unpack" [level=2] [ref=e133]
+          - button "toggle section" [ref=e134]
+        - link "使用说明" [ref=e140] [cursor=pointer]:
+          - /url: /guide/wxapkg-unpack.html
+          - paragraph [ref=e141]: 使用说明
+      - generic [ref=e143]:
+        - button "disk-clean toggle section" [ref=e144] [cursor=pointer]:
+          - heading "disk-clean" [level=2] [ref=e146]
+          - button "toggle section" [ref=e147]
+        - link "使用说明" [ref=e153] [cursor=pointer]:
+          - /url: /guide/disk-clean.html
+          - paragraph [ref=e154]: 使用说明
+      - generic [ref=e156]:
+        - button "sidebar-sync toggle section" [ref=e157] [cursor=pointer]:
+          - heading "sidebar-sync" [level=2] [ref=e159]
+          - button "toggle section" [ref=e160]
+        - link "使用说明" [ref=e166] [cursor=pointer]:
+          - /url: /guide/sidebar-sync.html
+          - paragraph [ref=e167]: 使用说明
+      - generic [ref=e169]:
+        - button "completion-contract toggle section" [ref=e170] [cursor=pointer]:
+          - heading "completion-contract" [level=2] [ref=e172]
+          - button "toggle section" [ref=e173]
+        - link "使用说明" [ref=e179] [cursor=pointer]:
+          - /url: /guide/completion-contract.html
+          - paragraph [ref=e180]: 使用说明
+  - generic [ref=e185]:
+    - main [ref=e186]:
+      - generic [ref=e188]:
+        - heading "快速开始 Permalink to \"快速开始\"" [level=1] [ref=e189]:
+          - text: 快速开始
+          - link "Permalink to \"快速开始\"" [ref=e190] [cursor=pointer]:
+            - /url: "#快速开始"
+            - text: "#"
+        - heading "安装 Permalink to \"安装\"" [level=2] [ref=e191]:
+          - text: 安装
+          - link "Permalink to \"安装\"" [ref=e192] [cursor=pointer]:
+            - /url: "#安装"
+            - text: "#"
+        - generic [ref=e193]:
+          - button "Copy Code" [ref=e194] [cursor=pointer]
+          - generic [ref=e195]: bash
+          - code [ref=e197]:
+            - generic [ref=e198]: "# 方式一：npx 一键安装全部技能"
+            - generic [ref=e199]: npx github:sunbirder/sunbirder-skill-tools --all
+            - generic [ref=e200]: "# 方式二：克隆仓库后安装"
+            - generic [ref=e201]: git clone <repo-url> && cd sunbirder-skill-tools
+            - generic [ref=e202]: node bin/cli.js --all
+        - heading "平台说明 Permalink to \"平台说明\"" [level=3] [ref=e203]:
+          - text: 平台说明
+          - link "Permalink to \"平台说明\"" [ref=e204] [cursor=pointer]:
+            - /url: "#平台说明"
+            - text: "#"
+        - paragraph [ref=e205]:
+          - text: 默认安装到所有检测到的平台（
+          - code [ref=e206]: ~/.claude
+          - text: 或
+          - code [ref=e207]: ~/.dsh
+          - text: 存在即认为该平台已安装）；
+          - code [ref=e208]: "--platform claude|dsh"
+          - text: 可指定单一平台。DeepSeek Harness 侧技能装到
+          - code [ref=e209]: ~/.dsh/skills/
+          - text: ， dsh 中技能即斜杠命令，无需安装命令文件。
+        - heading "使用 Permalink to \"使用\"" [level=2] [ref=e210]:
+          - text: 使用
+          - link "Permalink to \"使用\"" [ref=e211] [cursor=pointer]:
+            - /url: "#使用"
+            - text: "#"
+        - paragraph [ref=e212]: 安装完成后，在 Claude Code 中直接使用：
+        - list [ref=e213]:
+          - listitem [ref=e214]: 说 "帮我用 VitePress 展示这些 Markdown 文档" → 自动加载 vitepress-doc-site 技能
+          - listitem [ref=e215]:
+            - text: 输入
+            - code [ref=e216]: /skill:vitepress-doc-site
+            - text: → 直接调用命令
+        - heading "管理 Permalink to \"管理\"" [level=2] [ref=e217]:
+          - text: 管理
+          - link "Permalink to \"管理\"" [ref=e218] [cursor=pointer]:
+            - /url: "#管理"
+            - text: "#"
+        - generic [ref=e219]:
+          - button "Copy Code" [ref=e220] [cursor=pointer]
+          - generic [ref=e221]: bash
+          - code [ref=e223]:
+            - generic [ref=e224]: "sunbirder-skills --list # 查看已安装的技能与安装目标"
+            - generic [ref=e225]: "sunbirder-skills --all # 重新安装全部技能（覆盖更新）"
+            - generic [ref=e226]: "sunbirder-skills vitepress-doc-site # 安装指定技能"
+            - generic [ref=e227]: "sunbirder-skills install --platform dsh # 只安装到 DeepSeek Harness"
+    - contentinfo [ref=e228]:
+      - navigation "Pager" [ref=e229]:
+        - generic [ref=e230]: Pager
+        - link "Next page 技能列表" [ref=e233] [cursor=pointer]:
+          - /url: /guide/skills.html
+          - generic [ref=e234]: Next page
+          - generic [ref=e235]: 技能列表

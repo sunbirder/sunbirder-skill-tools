@@ -16,7 +16,7 @@
 4. 创建 `docs/.vitepress/config.ts`（导航、侧边栏），使用 `withMermaid()` 包装 + 中文搜索（Intl.Segmenter 词级分词）+ optimizeDeps.include（fastdom 等，防 dev 白屏）
 5. 创建首页 `docs/index.md`（home layout）
 6. 侧边栏两种模式：自动侧栏（复制 `auto-sidebar.mjs`，文件夹结构即菜单，新文件天然有入口）或手写（需分组语义时）
-7. 主题三件套（index.ts / custom.css / enhance-tables.ts）：内置内容加宽 + 表格增强
+7. 主题五件套（index.ts / layout.css / tables.css / enhance-tables.ts / enhance-layout.ts）：内置布局皮肤（三栏解锁 + 侧栏钉宽 + 顶栏跟随 + 面板显隐开关）+ 表格增强
 
 ## 输出结构
 
