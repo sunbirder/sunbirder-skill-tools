@@ -7,6 +7,8 @@ description: VitePress 侧边栏同步 — 扫描 docs 下所有 Markdown 文件
 
 文档文件生成了，但 `docs/.vitepress/config` 的侧边栏没有登记 → 页面在站点菜单里看不到、无法到达。本技能扫描全部文档文件与配置的差异，补齐菜单入口。
 
+> 典型产出场景：`prd-flow` 技能向 `docs/reqs/<产品名>/` 持续写入工件（00-07 步各产出新文件）、`doc-gen` 批量生成文档。若这些技能在产出时未同步侧边栏，用本技能事后补齐；`docs/reqs/` 的长期方案建议改用自动侧栏（autoSidebar，见 vitepress-doc-site 技能），结构性杜绝漏登记。
+
 ## 流程
 
 ### 第一步：扫描文档文件清单

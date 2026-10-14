@@ -1,5 +1,15 @@
 import { defineConfig } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
+import { autoSidebar } from './auto-sidebar.mjs'
+import { existsSync } from 'fs'
+
+// prd-flow 工件自动侧栏：docs/reqs/ 存在时启用（目录结构即菜单，产出零维护）
+// 注意：目录不存在时不能调 autoSidebar（ENOENT），先判存在
+function reqsSidebar() {
+  const root = new URL('./reqs', import.meta.url).pathname
+  if (!existsSync(root)) return []
+  return autoSidebar({ rootDir: root, routePrefix: '/reqs/' })
+}
 
 // 搜索分词：CJK 连续段二元切词（「中文分词」→ 中文/文分/分词；单字段保留单字），
 // 拉丁/数字连续段按词保留（小写化）。VitePress 1.6.4 默认分词不支持中文，必须注入。
@@ -168,6 +178,7 @@ export default withMermaid(
           ]
         },
       ],
+      '/reqs/': reqsSidebar(),
     },
     footer: {
       message: 'sunbirder-skill-tools',
