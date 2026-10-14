@@ -3,7 +3,7 @@
 // sunbirder-skill-tools CLI
 // 将技能 Markdown 文件和斜杠命令安装到 Claude Code 目录
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, cpSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { execSync } from 'child_process'
@@ -91,6 +91,10 @@ const SKILL_LIST = [
     name: 'completion-contract',
     description: '生成完成契约 — 开工前钉死五字段验收协议,验收只认命令真实输出',
   },
+  {
+    name: 'prd-flow',
+    description: 'PRD 八步工作流 — 澄清拷打→问题定义→范围圈定→用户故事→场景状态→PRD组装→评审预演→任务拆解',
+  },
 ]
 
 // 命令列表（技能对应的斜杠命令）
@@ -139,6 +143,10 @@ const COMMAND_LIST = [
     name: 'skill:completion-contract',
     description: '生成完成契约 — 开工前钉死五字段验收协议,验收只认命令真实输出',
   },
+  {
+    name: 'skill:prd-flow',
+    description: 'PRD 八步工作流 — 澄清拷打→问题定义→范围圈定→用户故事→场景状态→PRD组装→评审预演→任务拆解',
+  },
 ]
 
 function getPackageDir() {
@@ -166,12 +174,10 @@ function installSkill(skillName, targets = resolveTargetPlatforms().targets) {
   for (const platform of targets) {
     const dest = join(getHome(), platform.home, 'skills', skillName)
     try {
-      mkdirSync(dest, { recursive: true })
-      const skillFile = join(src, 'SKILL.md')
-      if (existsSync(skillFile)) {
-        writeFileSync(join(dest, 'SKILL.md'), readFileSync(skillFile))
-        console.log(`  [${platform.id}] ✓ 已安装技能: ${skillName}`)
-      }
+      // 先清空目标目录再整目录递归复制（技能可含 references/scripts/templates 子目录，且避免旧文件残留）
+      rmSync(dest, { recursive: true, force: true })
+      cpSync(src, dest, { recursive: true })
+      console.log(`  [${platform.id}] ✓ 已安装技能: ${skillName}`)
     } catch (err) {
       console.warn(`  [${platform.id}] ⚠ 写入失败，已跳过该平台: ${err.message}`)
     }

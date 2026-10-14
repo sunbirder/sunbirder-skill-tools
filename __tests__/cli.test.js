@@ -22,6 +22,22 @@ describe('文件完整性', () => {
     expect(existsSync(path)).toBe(true)
   })
 
+  it('skills/prd-flow 完整目录存在（SKILL.md + references + scripts + templates）', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    expect(existsSync(join(pkgDir, 'skills', 'prd-flow', 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(pkgDir, 'skills', 'prd-flow', 'references', 'question-playbook.md'))).toBe(true)
+    expect(existsSync(join(pkgDir, 'skills', 'prd-flow', 'scripts', 'validate.py'))).toBe(true)
+    expect(existsSync(join(pkgDir, 'skills', 'prd-flow', 'templates', '05-PRD.md'))).toBe(true)
+  })
+
+  it('commands/skill/prd-flow.md 存在', async () => {
+    const { getPackageDir } = await import('../bin/cli.js')
+    const pkgDir = getPackageDir()
+    const path = join(pkgDir, 'commands', 'skill', 'prd-flow.md')
+    expect(existsSync(path)).toBe(true)
+  })
+
   it('skills/discuss/SKILL.md 存在', async () => {
     const { getPackageDir } = await import('../bin/cli.js')
     const pkgDir = getPackageDir()
@@ -221,6 +237,13 @@ describe('loadSkills', () => {
     const names = skills.map(s => s.name)
     expect(names).toContain('wxapkg-unpack')
   })
+
+  it('包含 prd-flow', async () => {
+    const { loadSkills } = await import('../bin/cli.js')
+    const skills = loadSkills()
+    const names = skills.map(s => s.name)
+    expect(names).toContain('prd-flow')
+  })
 })
 
 describe('loadCommands', () => {
@@ -280,6 +303,13 @@ describe('loadCommands', () => {
     const names = commands.map(c => c.name)
     expect(names).toContain('skill:self-upgrade')
   })
+
+  it('包含 skill:prd-flow', async () => {
+    const { loadCommands } = await import('../bin/cli.js')
+    const commands = loadCommands()
+    const names = commands.map(c => c.name)
+    expect(names).toContain('skill:prd-flow')
+  })
 })
 
 describe('CLI installSkill', () => {
@@ -306,6 +336,27 @@ describe('CLI installSkill', () => {
 
     const content = readFileSync(targetFile, 'utf8')
     expect(content).toContain('VitePress')
+  })
+
+  it('安装多文件技能时递归复制子目录', async () => {
+    const { installSkill } = await import('../bin/cli.js')
+    installSkill('prd-flow')
+
+    const base = join(tmpDir, '.claude', 'skills', 'prd-flow')
+    expect(existsSync(join(base, 'SKILL.md'))).toBe(true)
+    expect(existsSync(join(base, 'references', 'question-playbook.md'))).toBe(true)
+    expect(existsSync(join(base, 'scripts', 'validate.py'))).toBe(true)
+    expect(existsSync(join(base, 'templates', '05-PRD.md'))).toBe(true)
+  })
+
+  it('重复安装清空旧文件（不留残留）', async () => {
+    const { installSkill } = await import('../bin/cli.js')
+    const base = join(tmpDir, '.claude', 'skills', 'prd-flow')
+    mkdirSync(join(base, 'stale-dir'), { recursive: true })
+    writeFileSync(join(base, 'stale-dir', 'old.md'), 'stale')
+    installSkill('prd-flow')
+    expect(existsSync(join(base, 'stale-dir'))).toBe(false)
+    expect(existsSync(join(base, 'SKILL.md'))).toBe(true)
   })
 
   it('安装命令到 ~/.claude/commands/', async () => {

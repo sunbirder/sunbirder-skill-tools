@@ -127,6 +127,13 @@ export default withMermaid(
             { text: '使用说明', link: '/guide/completion-contract' },
           ]
         },
+        {
+          text: 'prd-flow',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/prd-flow' },
+          ]
+        },
       ],
       '/discussions/': [
         { text: '方案讨论', link: '/discussions/' },
