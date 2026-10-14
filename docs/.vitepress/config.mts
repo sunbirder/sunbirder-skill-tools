@@ -114,6 +114,13 @@ export default withMermaid(
           ]
         },
         {
+          text: 'docs-theme-upgrade',
+          collapsed: false,
+          items: [
+            { text: '使用说明', link: '/guide/docs-theme-upgrade' },
+          ]
+        },
+        {
           text: 'completion-contract',
           collapsed: false,
           items: [

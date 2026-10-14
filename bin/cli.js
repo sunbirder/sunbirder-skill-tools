@@ -72,6 +72,10 @@ const SKILL_LIST = [
     description: 'VitePress 侧边栏同步 — 补齐缺失菜单入口，清理死链',
   },
   {
+    name: 'docs-theme-upgrade',
+    description: 'VitePress 文档站主题升级 — 同步最新布局皮肤/表格增强/自动侧栏/中文搜索',
+  },
+  {
     name: 'self-upgrade',
     description: '自升级 — 自动查找仓库拉取最新代码或通过 npx 升级',
   },
@@ -114,6 +118,10 @@ const COMMAND_LIST = [
   {
     name: 'skill:sidebar-sync',
     description: 'VitePress 侧边栏同步 — 补齐缺失菜单入口，清理死链',
+  },
+  {
+    name: 'skill:docs-theme-upgrade',
+    description: 'VitePress 文档站主题升级 — 同步最新主题能力',
   },
   {
     name: 'skill:self-upgrade',
